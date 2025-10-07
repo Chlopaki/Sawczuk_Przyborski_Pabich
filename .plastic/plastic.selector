@@ -1,0 +1,3 @@
+repository "Sawczuk_Przyborski_Pabich/Sawczuk_Przyborski_Pabich@7971540166153@cloud"
+  path "/"
+    smartbranch "/main"
