@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - LevelExit
+  - LevelFall
   layers:
   - Default
   - TransparentFX
@@ -40,6 +42,24 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 832663385
+    locked: 0
+  - name: Titlemap
+    uniqueID: 515095693
+    locked: 0
+  - name: Props
+    uniqueID: 430443297
+    locked: 0
+  - name: Platfroms
+    uniqueID: 2974892343
+    locked: 0
+  - name: Player & Enemies
+    uniqueID: 430216429
+    locked: 0
+  - name: Foreground
+    uniqueID: 1188919907
     locked: 0
   m_RenderingLayers:
   - Default

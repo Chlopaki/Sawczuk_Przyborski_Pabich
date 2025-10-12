@@ -3,12 +3,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [HeaderAttribute( "Movment parameters")]
-    [Range(0.01f, 20.0f)] [SerializeField] private float jumpForce = 6.0f;
+    [Range(0.01f, 20.0f)] [SerializeField] private float jumpForce = 1.0f;
     [Space(10)]
     [Range( 0.01f, 20.0f)] [SerializeField] private float moveSpeed = 0.1f;
     private Rigidbody2D rigidBody;
     [SerializeField] private LayerMask groundLayer;
-    const float rayLength = 1.7f;
+    const float rayLength = 0.25f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -49,5 +49,16 @@ public class PlayerController : MonoBehaviour
             rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
         Debug.Log("Lisu Skacze wariacie");
+    }
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("LevelExit"))
+        {
+            Debug.Log("Game over");
+        }
+        if (collision.gameObject.CompareTag("LevelFall"))
+        {
+            Debug.Log("You fall");
+        }
     }
 }
