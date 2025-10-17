@@ -6,6 +6,7 @@ TagManager:
   tags:
   - LevelExit
   - LevelFall
+  - Bonus
   layers:
   - Default
   - TransparentFX
