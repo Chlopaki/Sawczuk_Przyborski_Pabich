@@ -7,6 +7,7 @@ TagManager:
   - LevelExit
   - LevelFall
   - Bonus
+  - Enemy
   layers:
   - Default
   - TransparentFX

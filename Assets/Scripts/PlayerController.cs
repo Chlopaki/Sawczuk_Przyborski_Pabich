@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private bool isRunning;
     private bool isFacingRight = true;
+    private Vector2 startPosition;
    
     [SerializeField] private LayerMask groundLayer;
     const float rayLength = 0.25f;
@@ -22,41 +23,45 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        isRunning = false;
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+
+        if (GameManager.instance.currentGameState == GameState.GAME)
         {
-            transform.Translate(moveSpeed * Time.deltaTime, 0.0f, 0.0f, Space.World);
-            isRunning = true;
-            //isFacingRight = true;
-            if (!isFacingRight)
+            isRunning = false;
+            if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
-                Flip();
+                transform.Translate(moveSpeed * Time.deltaTime, 0.0f, 0.0f, Space.World);
+                isRunning = true;
+                //isFacingRight = true;
+                if (!isFacingRight)
+                {
+                    Flip();
+                }
             }
-        }
-        else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
-        {
-            transform.Translate(-moveSpeed * Time.deltaTime, 0.0f, 0.0f, Space.World);
-            isRunning = true;
-            //isFacingRight = false;
-            if (isFacingRight)
+            else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
             {
-                Flip();
+                transform.Translate(-moveSpeed * Time.deltaTime, 0.0f, 0.0f, Space.World);
+                isRunning = true;
+                //isFacingRight = false;
+                if (isFacingRight)
+                {
+                    Flip();
+                }
             }
+            if (Input.GetMouseButtonDown(0) || Input.GetKey(KeyCode.Space))
+            {
+                Jump();
+            }
+            Debug.DrawRay(transform.position, rayLength * Vector3.down, Color.blue, 0.2f, false);
+            animator.SetBool("IsGrounded", IsGround());
+            animator.SetBool("IsRunning", isRunning);
         }
-        if (Input.GetMouseButtonDown(0) || Input.GetKey(KeyCode.Space))
-        {
-            Jump();
-        }
-        Debug.DrawRay(transform.position, rayLength * Vector3.down, Color.blue, 0.2f, false);
-        animator.SetBool("IsGrounded", IsGround());
-        animator.SetBool("IsRunning", isRunning);
     }
 
     void Awake()
     {
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-
+        startPosition = transform.position;
     }
     bool IsGround()
     {
@@ -83,7 +88,14 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Bonus"))
         {
             Debug.Log("Bonus");
+            GameManager.instance.AddPoints(10);
             collision.gameObject.SetActive(false);
+        }
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            if (transform.position.y > collision.gameObject.transform.position.y) Debug.Log("Killed an enemy");
+            else Debug.Log("Koniec Gry");
+            //collision.gameObject.SetActive(false);
         }
     }
 

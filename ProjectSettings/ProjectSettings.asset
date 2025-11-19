@@ -673,11 +673,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: d7f0eabc-ae1c-40c2-a330-5d960cef15c6
+  cloudProjectId: d18459c2-1ea4-4b49-8a68-7d1fefa690ae
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Sawczuk_Przyborski_Pabich
-  organizationId: unity_iuijym4gpnz-yw
+  projectName: Labki MII
+  organizationId: mikoczuk
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

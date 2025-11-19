@@ -1,4 +1,5 @@
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
 
 public class EnemyControler : MonoBehaviour
 
@@ -82,4 +83,29 @@ public class EnemyControler : MonoBehaviour
             Flip();
         }
     }
+
+    IEnumerator KillOnAnimationEnd()
+    {
+        yield return new WaitForSeconds(0.5f);
+        gameObject.SetActive(false);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // Gracz jest wyżej → wróg ginie
+            if (collision.transform.position.y > transform.position.y)
+            {
+                animator.SetBool("IsDead",true);
+                StartCoroutine(KillOnAnimationEnd());
+            }
+            else
+            {
+                Debug.Log("Koniec gry!");
+            }
+        }
+    }
+
+    
 }
