@@ -14,6 +14,11 @@ public class PlayerController : MonoBehaviour
    
     [SerializeField] private LayerMask groundLayer;
     const float rayLength = 0.25f;
+
+    [Header("Ground Check")]
+    [SerializeField] private Vector2 boxSize = new Vector2(0.2f, 0.5f); // Szerokoœæ (X) i wysokoœæ (Y) strefy detekcji
+    [SerializeField] private float checkDistance = 0.4f;                 // Jak daleko pod graczem jest rzutowany ten prostok¹t
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -67,6 +72,31 @@ public class PlayerController : MonoBehaviour
     {
         return Physics2D.Raycast(this.transform.position, Vector2.down, rayLength, groundLayer.value);
     }
+
+    /* bool IsGround()
+     {
+         // U¿ywamy BoxCast do rzutowania prostok¹ta w dó³, co daje szerok¹ "stopê".
+         // RigidBody.position to zazwyczaj œrodek kolidera.
+         RaycastHit2D hit = Physics2D.BoxCast(
+             rigidBody.position,    // Centralny punkt startowy (œrodek gracza)
+             boxSize,               // Rozmiar boxa (Twoja szerokoœæ i wysokoœæ)
+             0f,                    // K¹t rotacji (zostaw 0)
+             Vector2.down,          // Kierunek rzutu (w dó³)
+             checkDistance,         // Dystans rzutu
+             groundLayer            // Warstwa gruntu
+         );
+
+         // Wizualizacja BoxCast w edytorze
+         // Zmieniamy kolor w zale¿noœci od tego, czy trafiliœmy w ziemiê.
+         Color rayColor = hit.collider != null ? Color.green : Color.red;
+
+         // Rysowanie BoxCast w edytorze
+         // U¿ywamy tego w zamian za Debug.DrawRay
+         Debug.DrawRay(rigidBody.position + Vector2.up * (boxSize.y / 2f), Vector2.down * (checkDistance + boxSize.y), rayColor);
+
+         return hit.collider != null;
+     }*/
+
     void Jump()
     {
         if (IsGround())
@@ -80,10 +110,13 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("LevelExit"))
         {
             Debug.Log("Game over");
+            
         }
         if (collision.gameObject.CompareTag("LevelFall"))
         {
             Debug.Log("You fall");
+            GameManager.instance.AddLife(-1);
+            Debug.Log("You have lost 1 life");
         }
         if (collision.gameObject.CompareTag("Bonus"))
         {
@@ -94,8 +127,24 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             if (transform.position.y > collision.gameObject.transform.position.y) Debug.Log("Killed an enemy");
-            else Debug.Log("Koniec Gry");
-            //collision.gameObject.SetActive(false);
+            else
+            {
+                Debug.Log("Koniec Gry");
+                GameManager.instance.AddLife(-1);
+                //collision.gameObject.SetActive(false);
+            }
+        }
+        if (collision.gameObject.CompareTag("Key"))
+        {
+            Debug.Log("Key found");
+            GameManager.instance.AddKeys();
+            collision.gameObject.SetActive(false);
+        }
+        if (collision.gameObject.CompareTag("Live"))
+        {
+            Debug.Log("Live obtained");
+            GameManager.instance.AddLife(1);
+            collision.gameObject.SetActive(false);
         }
     }
 
@@ -105,5 +154,20 @@ public class PlayerController : MonoBehaviour
         isFacingRight = !isFacingRight;
         theScale.x *= -1;
         transform.localScale = theScale;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (rigidBody != null)
+        {
+            // Ustawienie koloru (np. ¿ó³ty)
+            Gizmos.color = Color.yellow;
+
+            // Rysowanie obrysu prostok¹ta, który jest u¿ywany do detekcji
+            // Pozycja musi byæ skorygowana, aby pasowa³a do logiki BoxCast
+            Vector2 boxCenter = rigidBody.position + Vector2.down * (checkDistance + boxSize.y) / 2f;
+
+            Gizmos.DrawWireCube(boxCenter, boxSize + Vector2.up * checkDistance);
+        }
     }
 }

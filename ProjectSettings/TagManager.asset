@@ -8,6 +8,8 @@ TagManager:
   - LevelFall
   - Bonus
   - Enemy
+  - Key
+  - Live
   layers:
   - Default
   - TransparentFX
