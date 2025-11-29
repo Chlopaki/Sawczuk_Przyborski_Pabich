@@ -4,25 +4,50 @@ public class PlayerController : MonoBehaviour
 {
     [HeaderAttribute( "Movment parameters")]
     [Range(0.01f, 20.0f)] [SerializeField] private float jumpForce = 1.0f;
+    [Range(0.0f, 1.0f)][SerializeField] private float jumpCutMultiplier = 0.5f; // Jak ucina skok po puszczeniu przycisku
     [Space(10)]
     [Range( 0.01f, 20.0f)] [SerializeField] private float moveSpeed = 0.1f;
+    [Space(10)]
+    [Range(0.01f, 20.0f)][SerializeField] private float climbSpeed = 3.0f;
+
+    private Vector2 startPosition;
+   
+
+    //const float rayLength = 0.25f;
+
+
+
+    [Header("Ground Check settings")]
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Vector2 boxSize = new Vector2(0.110422f, 0.1f); //wielkoÅ›Ä‡ sprawdzania
+    [SerializeField] private float checkDistance = 0.05f; // dystans detekcji
+    [SerializeField] private Vector2 groundCheckOffset;
+
+    // Komponenty i flagi
     private Rigidbody2D rigidBody;
     private Animator animator;
     private bool isRunning;
     private bool isFacingRight = true;
-    private Vector2 startPosition;
-   
-    [SerializeField] private LayerMask groundLayer;
-    const float rayLength = 0.25f;
 
-    [Header("Ground Check")]
-    [SerializeField] private Vector2 boxSize = new Vector2(0.2f, 0.5f); // Szerokoœæ (X) i wysokoœæ (Y) strefy detekcji
-    [SerializeField] private float checkDistance = 0.4f;                 // Jak daleko pod graczem jest rzutowany ten prostok¹t
+    //drabina
+    private bool canClimb = false;    
+    private bool isClimbing = false;  
+    private float originalGravity;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         
+    }
+
+    void Awake()
+    {
+        rigidBody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        startPosition = transform.position;
+
+        originalGravity = rigidBody.gravityScale;
     }
 
     // Update is called once per frame
@@ -32,6 +57,8 @@ public class PlayerController : MonoBehaviour
         if (GameManager.instance.currentGameState == GameState.GAME)
         {
             isRunning = false;
+
+            float verticalInput = Input.GetAxisRaw("Vertical");
             if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
                 transform.Translate(moveSpeed * Time.deltaTime, 0.0f, 0.0f, Space.World);
@@ -52,100 +79,172 @@ public class PlayerController : MonoBehaviour
                     Flip();
                 }
             }
-            if (Input.GetMouseButtonDown(0) || Input.GetKey(KeyCode.Space))
+            //if (Input.GetMouseButtonDown(0) || Input.GetKey(KeyCode.Space))
+            //{
+            //    Jump();
+            //}
+
+            if ((Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Space)))
             {
-                Jump();
+                if (rigidBody.linearVelocity.y > 0)
+                {
+                    // zmmniejszanie prÄ™dkoÅ›ci wznoszenia
+                    rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y * jumpCutMultiplier);
+                }
             }
-            Debug.DrawRay(transform.position, rayLength * Vector3.down, Color.blue, 0.2f, false);
+
+            if (canClimb && Mathf.Abs(verticalInput) > 0.1f)
+            {
+                isClimbing = true;
+            }
+
+            if (isClimbing)
+            {
+                //wyÅ‚Ä…czenie grawitacji i zmiana prÄ™dkoÅ›ci pionowej
+                rigidBody.gravityScale = 0f;
+                rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, verticalInput * climbSpeed);
+            }
+            else
+            {
+                // PrzywrÃ³cenie grawitacji po wspinaniu siÄ™ WAÅ»NE!!!
+                rigidBody.gravityScale = originalGravity;
+            }
+
+            // Skok
+            if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
+            {
+                if (IsGround() || isClimbing)
+                {
+                    Jump();
+                }
+            }
+
+            // Kontrola wysokoÅ›ci skoku
+            if ((Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Space)))
+            {
+                if (rigidBody.linearVelocity.y > 0 && !isClimbing)
+                {
+                    rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y * jumpCutMultiplier);
+                }
+            }
+            //Debug.DrawRay(transform.position, rayLength * Vector3.down, Color.blue, 0.2f, false);
             animator.SetBool("IsGrounded", IsGround());
             animator.SetBool("IsRunning", isRunning);
         }
     }
 
-    void Awake()
-    {
-        rigidBody = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        startPosition = transform.position;
-    }
-    bool IsGround()
+
+
+   
+    /*bool IsGround()
     {
         return Physics2D.Raycast(this.transform.position, Vector2.down, rayLength, groundLayer.value);
+    }*/
+
+    bool IsGround()
+    {
+        //ustalenie Å›rodku z offsetem
+        float direction = Mathf.Sign(transform.localScale.x);
+        Vector2 realOffset = new Vector2(groundCheckOffset.x * direction, groundCheckOffset.y);
+        Vector2 origin = (Vector2)transform.position + realOffset;
+
+        // MARGINES BEZPIECZEÅƒSTWA:
+        // Odejmuje trochÄ™ od szerokoÅ›ci, Å¼eby promienie nie szÅ‚y po samej krawÄ™dzi kolidera coÅ› z tym by nie biegaÄ‡ po Å›cianach
+        float footSpacing = (boxSize.x / 2) - 0.02f;
+
+        // Pozycja lewej i prawej st00pki
+        Vector2 leftOrigin = origin + Vector2.left * footSpacing;
+        Vector2 rightOrigin = origin + Vector2.right * footSpacing;
+
+        //Teraz sÄ… dwa promienie z kaÅ¼dej syrki
+        RaycastHit2D leftHit = Physics2D.Raycast(leftOrigin, Vector2.down, checkDistance, groundLayer);
+        RaycastHit2D rightHit = Physics2D.Raycast(rightOrigin, Vector2.down, checkDistance, groundLayer);
+
+        // JeÅ›li ktÃ³ryÅ› trafiÅ‚ to stoimy na ziemi (moÅ¼na pÃ³Åºniej modyfikacje zrobiÄ‡ Å¼e gdy jeden jest tylko to poÅ‚owa siÅ‚y skoku jest tylko)
+        return leftHit.collider != null || rightHit.collider != null;
     }
 
-    /* bool IsGround()
-     {
-         // U¿ywamy BoxCast do rzutowania prostok¹ta w dó³, co daje szerok¹ "stopê".
-         // RigidBody.position to zazwyczaj œrodek kolidera.
-         RaycastHit2D hit = Physics2D.BoxCast(
-             rigidBody.position,    // Centralny punkt startowy (œrodek gracza)
-             boxSize,               // Rozmiar boxa (Twoja szerokoœæ i wysokoœæ)
-             0f,                    // K¹t rotacji (zostaw 0)
-             Vector2.down,          // Kierunek rzutu (w dó³)
-             checkDistance,         // Dystans rzutu
-             groundLayer            // Warstwa gruntu
-         );
-
-         // Wizualizacja BoxCast w edytorze
-         // Zmieniamy kolor w zale¿noœci od tego, czy trafiliœmy w ziemiê.
-         Color rayColor = hit.collider != null ? Color.green : Color.red;
-
-         // Rysowanie BoxCast w edytorze
-         // U¿ywamy tego w zamian za Debug.DrawRay
-         Debug.DrawRay(rigidBody.position + Vector2.up * (boxSize.y / 2f), Vector2.down * (checkDistance + boxSize.y), rayColor);
-
-         return hit.collider != null;
-     }*/
 
     void Jump()
     {
-        if (IsGround())
-        {
-            rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-        }
-        Debug.Log("Lisu Skacze wariacie");
+        isClimbing = false;
+        rigidBody.gravityScale = originalGravity;
+
+        rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, 0);
+        rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        //Debug.Log("Lisu Skacze wariacie");
+        
+        
     }
+    
+
     void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ladder"))
+        {
+            canClimb = true;
+        }
+        HandleCollisions(collision);
+        //logika z OnTriggerEnter2D w HandleCollisions
+    }
+
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ladder"))
+        {
+            canClimb = false;
+            isClimbing = false; // JeÅ›li wyjdziemy z drabiny, przestajemy siÄ™ wspinaÄ‡
+        }
+    }
+
+    void HandleCollisions(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("LevelExit"))
         {
             Debug.Log("Game over");
-            
         }
-        if (collision.gameObject.CompareTag("LevelFall"))
+        else if (collision.gameObject.CompareTag("LevelFall"))
         {
             Debug.Log("You fall");
             GameManager.instance.AddLife(-1);
             Debug.Log("You have lost 1 life");
+            transform.position = startPosition;
+            rigidBody.linearVelocity = Vector2.zero;
+            isClimbing = false; // reset wspinaczki po Å›mierci
         }
-        if (collision.gameObject.CompareTag("Bonus"))
+        else if (collision.gameObject.CompareTag("Bonus"))
         {
-            Debug.Log("Bonus");
             GameManager.instance.AddPoints(10);
             collision.gameObject.SetActive(false);
         }
-        if (collision.gameObject.CompareTag("Enemy"))
+        else if (collision.gameObject.CompareTag("Enemy"))
         {
-            if (transform.position.y > collision.gameObject.transform.position.y) Debug.Log("Killed an enemy");
+            if (transform.position.y > collision.gameObject.transform.position.y)
+            {
+                Debug.Log("Killed an enemy");
+                rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, 0);
+                rigidBody.AddForce(Vector2.up * (jumpForce / 1.5f), ForceMode2D.Impulse);
+            }
             else
             {
-                Debug.Log("Koniec Gry");
+                Debug.Log("You lost 1 life");
                 GameManager.instance.AddLife(-1);
-                //collision.gameObject.SetActive(false);
+                transform.position = startPosition;
+                rigidBody.linearVelocity = Vector2.zero;
+                isClimbing = false;
             }
         }
-        if (collision.gameObject.CompareTag("Key"))
-        {
-            Debug.Log("Key found");
-            GameManager.instance.AddKeys();
-            collision.gameObject.SetActive(false);
-        }
-        if (collision.gameObject.CompareTag("Live"))
+        else if (collision.gameObject.CompareTag("Live"))
         {
             Debug.Log("Live obtained");
             GameManager.instance.AddLife(1);
             collision.gameObject.SetActive(false);
         }
+        /*if (collision.gameObject.CompareTag("Key")) { 
+            Debug.Log("Key found");
+            GameManager.instance.AddKeys();
+            collision.gameObject.SetActive(false);
+        }*/
     }
 
     void Flip()
@@ -156,18 +255,36 @@ public class PlayerController : MonoBehaviour
         transform.localScale = theScale;
     }
 
+
     private void OnDrawGizmosSelected()
     {
-        if (rigidBody != null)
+        if (transform == null) return;
+
+        // 1. Oblicza pozycje startowe (tak samo jak w IsGround)
+        float direction = Mathf.Sign(transform.localScale.x);
+        Vector2 realOffset = new Vector2(groundCheckOffset.x * direction, groundCheckOffset.y);
+        Vector2 origin = (Vector2)transform.position + realOffset;
+
+        float footSpacing = (boxSize.x / 2) - 0.02f;
+        Vector2 leftOrigin = origin + Vector2.left * footSpacing;
+        Vector2 rightOrigin = origin + Vector2.right * footSpacing;
+
+        // 2. Sprawdza czy dotyka ziemi w celu wybrania koloru
+        bool isHitLeft = Physics2D.Raycast(leftOrigin, Vector2.down, checkDistance, groundLayer);
+        bool isHitRight = Physics2D.Raycast(rightOrigin, Vector2.down, checkDistance, groundLayer);
+
+        // 3. Wybiera kolor: Zielony jeÅ›li dotyka, Czerwony jeÅ›li powietrze
+        if (isHitLeft || isHitRight)
         {
-            // Ustawienie koloru (np. ¿ó³ty)
-            Gizmos.color = Color.yellow;
-
-            // Rysowanie obrysu prostok¹ta, który jest u¿ywany do detekcji
-            // Pozycja musi byæ skorygowana, aby pasowa³a do logiki BoxCast
-            Vector2 boxCenter = rigidBody.position + Vector2.down * (checkDistance + boxSize.y) / 2f;
-
-            Gizmos.DrawWireCube(boxCenter, boxSize + Vector2.up * checkDistance);
+            Gizmos.color = Color.green;
         }
+        else
+        {
+            Gizmos.color = Color.red;
+        }
+
+        // 4. Rysuje linie
+        Gizmos.DrawLine(leftOrigin, leftOrigin + Vector2.down * checkDistance);
+        Gizmos.DrawLine(rightOrigin, rightOrigin + Vector2.down * checkDistance);
     }
 }

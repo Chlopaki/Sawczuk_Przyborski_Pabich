@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - Key
   - Live
+  - Ladder
   layers:
   - Default
   - TransparentFX

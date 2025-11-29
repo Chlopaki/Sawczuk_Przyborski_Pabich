@@ -1,4 +1,8 @@
 using UnityEngine;
+using UnityEngine.UI;
+using System;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -12,14 +16,16 @@ public enum GameState
 
 public class GameManager : MonoBehaviour
 {
-    public GameState currentGameState = GameState.PAUSE_MENU;
+    [SerializeField] public GameState currentGameState = GameState.GAME;
     public static GameManager instance;
     private int score = 0;
-    private int keysFound = 0;
-    public static int maxKeys = 3; //iloœæ kluczy na planszy
+    //private int keysFound = 0;
+    //public static int maxKeys = 3; //iloœæ kluczy na planszy
     public int livesNum = 3; // iloœæ ¿yæ start - 3
-    public bool keysCompleted = false;
-    public Canvas gameCanvas;
+    //public bool keysCompleted = false;
+    [SerializeField] public Canvas gameCanvas;
+    public TMP_Text scoreLabel;
+    [SerializeField] public Canvas pauseMenuCanvas;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -28,29 +34,17 @@ public class GameManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    /* void Update()
+     void Update()
      {
          if (Input.GetKeyDown(KeyCode.Escape))
          {
              if (currentGameState == GameState.PAUSE_MENU) currentGameState = GameState.GAME;
              else currentGameState = GameState.PAUSE_MENU;
          }
-     }*/
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (currentGameState == GameState.PAUSE_MENU)
-            {
-                SetGameState(GameState.GAME); // U¿ywamy metody, aby odœwie¿yæ Canvas
-            }
-            else
-            {
-                SetGameState(GameState.PAUSE_MENU); // U¿ywamy metody, aby ukryæ Canvas
-            }
-        }
+        pauseMenuCanvas.enabled = (currentGameState == GameState.PAUSE_MENU);
+        gameCanvas.enabled = (currentGameState == GameState.GAME);
     }
+
 
 
     void Awake()
@@ -66,15 +60,17 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Duplicated Game Manager", gameObject);
             Destroy(gameObject);
         }
+        scoreLabel.text = score.ToString();
     }
 
     public void AddPoints(int points)
     {
         score += points;
         Debug.Log("Aktualny Wynik: " + score);
+        scoreLabel.text = score.ToString();
     }
 
-    public void AddKeys()
+    /*public void AddKeys()
     {
         keysFound = keysFound + 1;
         if (maxKeys == keysFound)
@@ -86,29 +82,33 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Zebrano: " + keysFound + " kluczy");
         }
-    }
+    }*/
 
     public void AddLife(int liveParam)
     {
         livesNum += liveParam;
     }
 
-    /*void SetGameState(GameState newGameState)
-    {
-        currentGameState = newGameState;
-    }*/
 
     void SetGameState(GameState newGameState)
     {
         currentGameState = newGameState;
+        pauseMenuCanvas.enabled = (currentGameState == GameState.PAUSE_MENU);
 
-        // Sprawdzamy, czy gameCanvas zosta³ przypisany w inspektorze, aby unikn¹æ b³êdów
-        if (gameCanvas != null)
-        {
-            // Canvas jest w³¹czony (enabled = true) TYLKO wtedy, gdy stan to GAME.
-            // W ka¿dym innym przypadku (PAUSE_MENU, LEVEL_COMPLETED) bêdzie false.
-            gameCanvas.enabled = (currentGameState == GameState.GAME);
-        }
+    }
+
+    public void OnResumeButtonClick()
+    {
+        InGame();
+    }
+    public void OnRestartButtonClick()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void OnMenuButtonClick()
+    {
+        pauseMenuCanvas.enabled = false;
+        SceneManager.LoadScene("MainMenu");
     }
 
     void PauseMenu()
@@ -118,6 +118,11 @@ public class GameManager : MonoBehaviour
     void InGame()
     {
         SetGameState(GameState.GAME);
+
+        if (gameCanvas != null)
+        {
+            gameCanvas.enabled = (currentGameState == GameState.GAME);
+        }
     }
     void LevelCompleted()
     {
