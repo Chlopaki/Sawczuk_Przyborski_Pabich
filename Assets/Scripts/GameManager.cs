@@ -3,134 +3,191 @@ using UnityEngine.UI;
 using System;
 using TMPro;
 using UnityEngine.SceneManagement;
-
+//kupa
 public enum GameState
 {
     [InspectorName("Gameplay")] GAME,
     [InspectorName("Pause")] PAUSE_MENU,
-    [InspectorName("Level completed (either successfully or failed)")] LEVEL_COMPLETED
+    [InspectorName("Level completed")] LEVEL_COMPLETED
 }
-
-
-
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] public GameState currentGameState = GameState.GAME;
     public static GameManager instance;
-    private int score = 0;
-    //private int keysFound = 0;
-    //public static int maxKeys = 3; //iloœæ kluczy na planszy
-    public int livesNum = 3; // iloœæ ¿yæ start - 3
-    //public bool keysCompleted = false;
+
+    [Header("Game State")]
+    [SerializeField] public GameState currentGameState = GameState.GAME;
+
+    [Header("Game Stats")]
+    public int score = 0;
+    public int livesNum = 3;    // G³ówna zmienna ¿yæ (zmieniona z 3 na startow¹ wartoœæ)
+    private int defeatedEnemies = 0;
+    private float gameTime = 0f;
+
+    [Header("UI Objects (Canvas)")]
     [SerializeField] public Canvas gameCanvas;
-    public TMP_Text scoreLabel;
     [SerializeField] public Canvas pauseMenuCanvas;
+    [SerializeField] public Canvas levelCompleted;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-     void Update()
-     {
-         if (Input.GetKeyDown(KeyCode.Escape))
-         {
-             if (currentGameState == GameState.PAUSE_MENU) currentGameState = GameState.GAME;
-             else currentGameState = GameState.PAUSE_MENU;
-         }
-        pauseMenuCanvas.enabled = (currentGameState == GameState.PAUSE_MENU);
-        gameCanvas.enabled = (currentGameState == GameState.GAME);
-    }
-
-
+    [Header("UI Text References")]
+    public TMP_Text scoreLabel;       // Wynik w trakcie gry
+    public TMP_Text finalScoreLabel;  // Wynik na ekranie koñcowym
+    public TMP_Text livesText;        // Licznik serc
+    public TMP_Text timeText;         // Licznik czasu
+    public TMP_Text enemiesText;      // Licznik wrogów
 
     void Awake()
     {
-        // Jeœli NIE MA instancji ? przypisz tê
+        // Singleton pattern
         if (instance == null)
         {
             instance = this;
         }
         else
         {
-            // Jeœli instancja ju¿ istnieje ? b³¹d i zniszczenie duplikatu
             Debug.LogError("Duplicated Game Manager", gameObject);
             Destroy(gameObject);
         }
-        scoreLabel.text = score.ToString();
+
+        // Inicjalizacja tekstu wyniku na starcie
+        if (scoreLabel != null) scoreLabel.text = score.ToString();
+    }
+
+    void Start()
+    {
+        SetGameState(GameState.GAME);
+        UpdateUI(); // Wa¿ne: Odœwie¿ UI na starcie, ¿eby pokazaæ pocz¹tkowe ¿ycia i wrogów
+    }
+
+    void Update()
+    {
+        // Obs³uga pauzy (ESC)
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (currentGameState == GameState.PAUSE_MENU)
+                SetGameState(GameState.GAME);
+            else if (currentGameState == GameState.GAME)
+                SetGameState(GameState.PAUSE_MENU);
+        }
+
+        // Obs³uga Czasu (tylko podczas gry)
+        if (currentGameState == GameState.GAME)
+        {
+            gameTime += Time.deltaTime;
+
+            if (timeText != null)
+            {
+                int minutes = Mathf.FloorToInt(gameTime / 60F);
+                int seconds = Mathf.FloorToInt(gameTime % 60F);
+                timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            }
+        }
+    }
+
+    // Metoda do odœwie¿ania liczników (¯ycia i Wrogowie)
+    void UpdateUI()
+    {
+        if (livesText != null)
+            livesText.text = livesNum.ToString();
+
+        if (enemiesText != null)
+            enemiesText.text = defeatedEnemies.ToString();
     }
 
     public void AddPoints(int points)
     {
         score += points;
         Debug.Log("Aktualny Wynik: " + score);
-        scoreLabel.text = score.ToString();
+        if (scoreLabel != null) scoreLabel.text = score.ToString();
     }
 
-    /*public void AddKeys()
+    public void AddLife(int value)
     {
-        keysFound = keysFound + 1;
-        if (maxKeys == keysFound)
-        {
-            keysCompleted = true;
-            Debug.Log("Zebrano Wszystkie klucze");
-        }
-        else
-        {
-            Debug.Log("Zebrano: " + keysFound + " kluczy");
-        }
-    }*/
+        livesNum += value;
 
-    public void AddLife(int liveParam)
-    {
-        livesNum += liveParam;
+        // Zabezpieczenie przed œmierci¹
+        if (livesNum <= 0)
+        {
+            livesNum = 0;
+            GameOver();
+        }
+
+        UpdateUI(); // Odœwie¿ licznik serc
     }
 
+    public void AddEnemyKill()
+    {
+        defeatedEnemies++;
+        UpdateUI(); // Odœwie¿ licznik wrogów
+    }
 
+    // Zarz¹dzanie stanami gry
     void SetGameState(GameState newGameState)
     {
         currentGameState = newGameState;
-        pauseMenuCanvas.enabled = (currentGameState == GameState.PAUSE_MENU);
 
+        // W³¹cz/Wy³¹cz Canvasy w zale¿noœci od stanu
+        if (gameCanvas != null)
+            gameCanvas.enabled = (currentGameState == GameState.GAME);
+
+        if (pauseMenuCanvas != null)
+            pauseMenuCanvas.enabled = (currentGameState == GameState.PAUSE_MENU);
+
+        if (levelCompleted != null)
+        {
+            // Jeœli ukoñczono poziom, w³¹cz ekran koñcowy
+            if (newGameState == GameState.LEVEL_COMPLETED)
+            {
+                levelCompleted.enabled = true;
+                if (finalScoreLabel != null)
+                {
+                    finalScoreLabel.text = "Twój wynik: " + score.ToString();
+                }
+            }
+            else
+            {
+                levelCompleted.enabled = false;
+            }
+        }
     }
 
+    // --- Metody dla Przycisków UI ---
     public void OnResumeButtonClick()
     {
         InGame();
     }
+
     public void OnRestartButtonClick()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
     public void OnMenuButtonClick()
     {
-        pauseMenuCanvas.enabled = false;
+        Time.timeScale = 1f; // Upewnij siê, ¿e czas p³ynie po wyjœciu do menu
         SceneManager.LoadScene("MainMenu");
+    }
+
+    // --- Metody Pomocnicze ---
+    public void LevelCompleted()
+    {
+        SetGameState(GameState.LEVEL_COMPLETED);
+    }
+
+    void GameOver()
+    {
+        Debug.Log("Game Over!");
+        // Tutaj mo¿na dodaæ osobny ekran Game Over, na razie u¿ywamy LevelCompleted lub restartu
+        SetGameState(GameState.LEVEL_COMPLETED);
     }
 
     void PauseMenu()
     {
         SetGameState(GameState.PAUSE_MENU);
     }
+
     void InGame()
     {
         SetGameState(GameState.GAME);
-
-        if (gameCanvas != null)
-        {
-            gameCanvas.enabled = (currentGameState == GameState.GAME);
-        }
-    }
-    void LevelCompleted()
-    {
-        SetGameState(GameState.LEVEL_COMPLETED);
-    }
-    void GameOver()
-    {
-        SetGameState(GameState.LEVEL_COMPLETED);
     }
 }
-

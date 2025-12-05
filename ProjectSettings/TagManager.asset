@@ -6,11 +6,6 @@ TagManager:
   tags:
   - LevelExit
   - LevelFall
-  - Bonus
-  - Enemy
-  - Key
-  - Live
-  - Ladder
   layers:
   - Default
   - TransparentFX

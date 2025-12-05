@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class PlayerController : MonoBehaviour
 {
@@ -135,12 +136,6 @@ public class PlayerController : MonoBehaviour
 
 
 
-   
-    /*bool IsGround()
-    {
-        return Physics2D.Raycast(this.transform.position, Vector2.down, rayLength, groundLayer.value);
-    }*/
-
     bool IsGround()
     {
         //ustalenie środku z offsetem
@@ -184,8 +179,14 @@ public class PlayerController : MonoBehaviour
         {
             canClimb = true;
         }
-        HandleCollisions(collision);
+       
         //logika z OnTriggerEnter2D w HandleCollisions
+        if (collision.CompareTag("LevelExit"))
+        {
+            GameManager.instance.score=GameManager.instance.score + 100 * GameManager.instance.livesNum; // bonus za ukończenie poziomu
+            GameManager.instance.LevelCompleted();
+        }
+        HandleCollisions(collision);
     }
 
     void OnTriggerExit2D(Collider2D collision)
@@ -202,6 +203,8 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("LevelExit"))
         {
             Debug.Log("Game over");
+            //GameManager.instance.score=GameManager.instance.score + 100 * GameManager.instance.livesNum; // bonus za ukończenie poziomu
+            //GameManager.instance.LevelCompleted();
         }
         else if (collision.gameObject.CompareTag("LevelFall"))
         {
@@ -224,6 +227,7 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("Killed an enemy");
                 rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, 0);
                 rigidBody.AddForce(Vector2.up * (jumpForce / 1.5f), ForceMode2D.Impulse);
+                GameManager.instance.AddEnemyKill();
             }
             else
             {
