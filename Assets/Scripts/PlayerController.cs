@@ -101,7 +101,7 @@ public class PlayerController : MonoBehaviour
 
             if (isClimbing)
             {
-                //wyłączenie grawitacji i zmiana prędkości pionowej
+                // wyłączenie grawitacji i zmiana prędkości pionowej
                 rigidBody.gravityScale = 0f;
                 rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, verticalInput * climbSpeed);
             }
@@ -181,11 +181,11 @@ public class PlayerController : MonoBehaviour
         }
        
         //logika z OnTriggerEnter2D w HandleCollisions
-        if (collision.CompareTag("LevelExit"))
+        /*if (collision.CompareTag("LevelExit"))
         {
             GameManager.instance.score=GameManager.instance.score + 100 * GameManager.instance.livesNum; // bonus za ukończenie poziomu
             GameManager.instance.LevelCompleted();
-        }
+        }*/
         HandleCollisions(collision);
     }
 
@@ -194,17 +194,17 @@ public class PlayerController : MonoBehaviour
         if (collision.CompareTag("Ladder"))
         {
             canClimb = false;
-            isClimbing = false; // Jeśli wyjdziemy z drabiny, przestajemy się wspinać
+            isClimbing = false;
         }
     }
 
     void HandleCollisions(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("LevelExit"))
+        if (collision.gameObject.CompareTag("LevelExit") && GameManager.instance.keyNum == 3)
         {
             Debug.Log("Game over");
-            //GameManager.instance.score=GameManager.instance.score + 100 * GameManager.instance.livesNum; // bonus za ukończenie poziomu
-            //GameManager.instance.LevelCompleted();
+            GameManager.instance.score = GameManager.instance.score + 100 * GameManager.instance.livesNum; // bonus za ukończenie poziomu
+            GameManager.instance.LevelCompleted();
         }
         else if (collision.gameObject.CompareTag("LevelFall"))
         {
@@ -244,11 +244,21 @@ public class PlayerController : MonoBehaviour
             GameManager.instance.AddLife(1);
             collision.gameObject.SetActive(false);
         }
-        /*if (collision.gameObject.CompareTag("Key")) { 
-            Debug.Log("Key found");
-            GameManager.instance.AddKeys();
-            collision.gameObject.SetActive(false);
-        }*/
+        if (collision.gameObject.CompareTag("Key"))
+        {
+            // Pobieramy skrypt z klucza, żeby wiedzieć jaki ma kolor
+            KeyItem keyScript = collision.gameObject.GetComponent<KeyItem>();
+
+            if (keyScript != null)
+            {
+                Debug.Log("Collected " + keyScript.keyColor + " Key");
+
+                // Wysłanie konkretnego koloru
+                GameManager.instance.AddKey(keyScript.keyColor);
+
+                collision.gameObject.SetActive(false);
+            }
+        }
     }
 
     void Flip()
@@ -264,7 +274,7 @@ public class PlayerController : MonoBehaviour
     {
         if (transform == null) return;
 
-        // 1. Oblicza pozycje startowe (tak samo jak w IsGround)
+        // Oblicza pozycje startowe (tak samo jak w IsGround)
         float direction = Mathf.Sign(transform.localScale.x);
         Vector2 realOffset = new Vector2(groundCheckOffset.x * direction, groundCheckOffset.y);
         Vector2 origin = (Vector2)transform.position + realOffset;
@@ -273,11 +283,11 @@ public class PlayerController : MonoBehaviour
         Vector2 leftOrigin = origin + Vector2.left * footSpacing;
         Vector2 rightOrigin = origin + Vector2.right * footSpacing;
 
-        // 2. Sprawdza czy dotyka ziemi w celu wybrania koloru
+        // Sprawdzenie czy dotyka ziemi w celu wybrania koloru
         bool isHitLeft = Physics2D.Raycast(leftOrigin, Vector2.down, checkDistance, groundLayer);
         bool isHitRight = Physics2D.Raycast(rightOrigin, Vector2.down, checkDistance, groundLayer);
 
-        // 3. Wybiera kolor: Zielony jeśli dotyka, Czerwony jeśli powietrze
+        // Wybieranie koloru: Zielony jeśli dotyka, Czerwony jeśli powietrze
         if (isHitLeft || isHitRight)
         {
             Gizmos.color = Color.green;
@@ -287,7 +297,7 @@ public class PlayerController : MonoBehaviour
             Gizmos.color = Color.red;
         }
 
-        // 4. Rysuje linie
+        // Rysowaine promieni
         Gizmos.DrawLine(leftOrigin, leftOrigin + Vector2.down * checkDistance);
         Gizmos.DrawLine(rightOrigin, rightOrigin + Vector2.down * checkDistance);
     }

@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     [Header("Game Stats")]
     public int score = 0;
     public int livesNum = 3;    // G³ówna zmienna ¿yæ (zmieniona z 3 na startow¹ wartoœæ)
+    public int keyNum = 0;
     private int defeatedEnemies = 0;
     private float gameTime = 0f;
 
@@ -29,12 +30,24 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Canvas pauseMenuCanvas;
     [SerializeField] public Canvas levelCompleted;
 
+    [Header("UI References")]
+    [SerializeField] private Image[] keyIcons;
+
+    [Header("Settings")]
+    [SerializeField] private Color lockedColor = Color.black;
+    [SerializeField] private Color unlockedColor = Color.white;
+
     [Header("UI Text References")]
     public TMP_Text scoreLabel;       // Wynik w trakcie gry
     public TMP_Text finalScoreLabel;  // Wynik na ekranie koñcowym
     public TMP_Text livesText;        // Licznik serc
     public TMP_Text timeText;         // Licznik czasu
     public TMP_Text enemiesText;      // Licznik wrogów
+    public TMP_Text keyText;          // Licznik kluczy
+
+
+    // Tablica booli dla konkretnych kluczy 
+    private bool[] collectedKeys = new bool[3];
 
     void Awake()
     {
@@ -57,6 +70,7 @@ public class GameManager : MonoBehaviour
     {
         SetGameState(GameState.GAME);
         UpdateUI(); // Wa¿ne: Odœwie¿ UI na starcie, ¿eby pokazaæ pocz¹tkowe ¿ycia i wrogów
+        
     }
 
     void Update()
@@ -82,6 +96,23 @@ public class GameManager : MonoBehaviour
                 timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
             }
         }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+    }
+
+    void UpdateKeyUI()
+    {
+        for (int i = 0; i < keyIcons.Length; i++)
+        {
+            // Sprawdzamy konkretny indeks: Czy mamy klucz nr "i"?
+            if (collectedKeys[i] == true)
+            {
+                keyIcons[i].color = unlockedColor; // Poka¿ kolor
+            }
+            else
+            {
+                keyIcons[i].color = lockedColor; // Poka¿ cieñ
+            }
+        }
     }
 
     // Metoda do odœwie¿ania liczników (¯ycia i Wrogowie)
@@ -92,6 +123,9 @@ public class GameManager : MonoBehaviour
 
         if (enemiesText != null)
             enemiesText.text = defeatedEnemies.ToString();
+
+        UpdateKeyUI();
+        
     }
 
     public void AddPoints(int points)
@@ -113,6 +147,14 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateUI(); // Odœwie¿ licznik serc
+    }
+
+    public void AddKey(KeyColor color)
+    {
+        int keyIndex = (int)color;
+        collectedKeys[keyIndex] = true;
+        keyNum ++;
+        UpdateUI();
     }
 
     public void AddEnemyKill()

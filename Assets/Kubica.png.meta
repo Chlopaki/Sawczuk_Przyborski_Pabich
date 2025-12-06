@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Kubica_0: -6937866422433330609
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
