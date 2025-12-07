@@ -183,7 +183,7 @@ public class GameManager : MonoBehaviour
                 levelCompleted.enabled = true;
                 if (finalScoreLabel != null)
                 {
-                    finalScoreLabel.text = "Twój wynik: " + score.ToString();
+                    finalScoreLabel.text = "SCORE: " + score.ToString();
                 }
             }
             else

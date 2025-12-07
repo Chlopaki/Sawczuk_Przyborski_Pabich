@@ -131,6 +131,9 @@ public class PlayerController : MonoBehaviour
             //Debug.DrawRay(transform.position, rayLength * Vector3.down, Color.blue, 0.2f, false);
             animator.SetBool("IsGrounded", IsGround());
             animator.SetBool("IsRunning", isRunning);
+            animator.SetBool("IsClimbing", isClimbing);
+            // Przesłanie szybkości wspiania się do animatora (by tego noo wiedzieć kiedy stoi podczas wpsinaczki)
+            animator.SetFloat("ClimbSpeed", Mathf.Abs(verticalInput));
         }
     }
 
