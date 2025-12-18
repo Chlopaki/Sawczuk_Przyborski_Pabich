@@ -178,11 +178,17 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
+        // Sprawdź tag i upewnij się, że platforma jest aktywna w hierarchii
+        if (collision.CompareTag("Moving Platform") && collision.gameObject.activeInHierarchy)
+        {
+            transform.SetParent(collision.transform);
+        }
+
+        
         if (collision.CompareTag("Ladder"))
         {
             canClimb = true;
         }
-       
         //logika z OnTriggerEnter2D w HandleCollisions
         /*if (collision.CompareTag("LevelExit"))
         {
@@ -194,7 +200,16 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Ladder"))
+        // Po wyjściu z triggera platformy, czyścimy rodzica (parent = null)
+        if (collision.CompareTag("Moving Platform"))
+        {
+            // Przed odpięciem sprawdź, czy transformacja jest możliwa
+            if (this.gameObject.activeInHierarchy)
+            {
+                transform.SetParent(null);
+            }
+        }
+        else if (collision.CompareTag("Ladder"))
         {
             canClimb = false;
             isClimbing = false;
@@ -212,6 +227,7 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.CompareTag("LevelFall"))
         {
             Debug.Log("You fall");
+            transform.SetParent(null);
             GameManager.instance.AddLife(-1);
             Debug.Log("You have lost 1 life");
             transform.position = startPosition;
