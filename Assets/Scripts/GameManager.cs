@@ -8,7 +8,8 @@ public enum GameState
 {
     [InspectorName("Gameplay")] GAME,
     [InspectorName("Pause")] PAUSE_MENU,
-    [InspectorName("Level completed")] LEVEL_COMPLETED
+    [InspectorName("Level completed")] LEVEL_COMPLETED,
+    [InspectorName("Options")] GS_OPTIONS // Dodano stan opcji
 }
 
 public class GameManager : MonoBehaviour
@@ -48,6 +49,9 @@ public class GameManager : MonoBehaviour
 
     // Tablica booli dla konkretnych kluczy 
     private bool[] collectedKeys = new bool[3];
+
+    [Header("Options UI")]
+    [SerializeField] public Canvas optionsCanvas; // Referencja do Canvasu opcji
 
     void Awake()
     {
@@ -174,6 +178,10 @@ public class GameManager : MonoBehaviour
 
         if (pauseMenuCanvas != null)
             pauseMenuCanvas.enabled = (currentGameState == GameState.PAUSE_MENU);
+        if (optionsCanvas != null) optionsCanvas.enabled = (currentGameState == GameState.GS_OPTIONS); //
+
+        // Zamro¿enie czasu w menu
+        Time.timeScale = (currentGameState == GameState.PAUSE_MENU || currentGameState == GameState.GS_OPTIONS) ? 0f : 1f;
 
         if (levelCompleted != null)
         {
@@ -192,6 +200,14 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    public void Options() => SetGameState(GameState.GS_OPTIONS);
+
+    public void SetVolume(float vol) => AudioListener.volume = vol; // Ustawienie g³oœnoœci
+
+    public void IncreaseQuality() => QualitySettings.IncreaseLevel(); // Zwiêkszenie jakoœci
+    public void DecreaseQuality() => QualitySettings.DecreaseLevel(); // Zmniejszenie jakoœci
+
+    public string GetQualityName() => QualitySettings.names[QualitySettings.GetQualityLevel()]; // Nazwa jakoœci
 
     // --- Metody dla Przycisków UI ---
     public void OnResumeButtonClick()

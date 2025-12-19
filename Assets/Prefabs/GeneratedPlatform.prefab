@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 7599975075452870603}
   - component: {fileID: 2180823378408611546}
   - component: {fileID: 5712350718669650802}
-  - component: {fileID: 1047294222482384755}
-  - component: {fileID: 8178254225432544168}
+  - component: {fileID: -2150639884073427182}
   m_Layer: 6
-  m_Name: MovingPlatform
+  m_Name: GeneratedPlatform
   m_TagString: MovingPlatform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -136,7 +135,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.32, y: 0.16}
   m_EdgeRadius: 0
---- !u!61 &1047294222482384755
+--- !u!61 &-2150639884073427182
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -182,17 +181,3 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.32, y: 0.16}
   m_EdgeRadius: 0
---- !u!114 &8178254225432544168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4203781661751317825}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2aac548a7c3ca4a469d489c74ca6638b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 1
-  moveRange: 3
