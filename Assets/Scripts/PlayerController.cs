@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // Skok
-            if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
+            if ((Input.GetKeyDown(KeyCode.Space)))
             {
                 if (IsGround() || isClimbing)
                 {
@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // Kontrola wysokości skoku
-            if ((Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Space)))
+            if ((Input.GetKeyUp(KeyCode.Space)))
             {
                 if (rigidBody.linearVelocity.y > 0 && !isClimbing)
                 {
