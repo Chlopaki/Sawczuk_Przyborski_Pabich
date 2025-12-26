@@ -35,6 +35,24 @@ public class PlayerController : MonoBehaviour
     private bool isClimbing = false;  
     private float originalGravity;
 
+    [Header("Shooting Settings")]
+    [SerializeField] private GameObject tirePrefab; 
+    [SerializeField] private Transform firePoint;   
+    [SerializeField] private float fireRate = 0.5f;
+    private float nextFireTime = 0f;
+
+    [Header("Audio settings")]
+    [SerializeField] private AudioClip bSound;
+    [SerializeField] private AudioClip keySound;
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private AudioClip levelPassedSound;
+    [SerializeField] private AudioClip LevelFailedSound;
+    [SerializeField] private AudioClip killSound;
+    [SerializeField] private AudioClip shootSound;
+
+    private AudioSource source;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,6 +67,8 @@ public class PlayerController : MonoBehaviour
         startPosition = transform.position;
 
         originalGravity = rigidBody.gravityScale;
+
+        source = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -80,10 +100,12 @@ public class PlayerController : MonoBehaviour
                     Flip();
                 }
             }
-            //if (Input.GetMouseButtonDown(0) || Input.GetKey(KeyCode.Space))
-            //{
-            //    Jump();
-            //}
+
+            else if (Input.GetKeyDown(KeyCode.F) && Time.time >= nextFireTime)
+            {
+                Shoot();
+                nextFireTime = Time.time + fireRate; // Reset licznika czasu
+            }
 
             if ((Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Space)))
             {
@@ -171,8 +193,9 @@ public class PlayerController : MonoBehaviour
         rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, 0);
         rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         //Debug.Log("Lisu Skacze wariacie");
-        
-        
+
+        if (source != null && jumpSound != null)
+            source.PlayOneShot(jumpSound, AudioListener.volume);
     }
     
 
@@ -220,6 +243,8 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Game over");
             GameManager.instance.score = GameManager.instance.score + 100 * GameManager.instance.livesNum; // bonus za ukończenie poziomu
+            if (source != null && levelPassedSound != null)
+                source.PlayOneShot(levelPassedSound, AudioListener.volume);
             GameManager.instance.LevelCompleted();
         }
         else if (collision.gameObject.CompareTag("LevelFall"))
@@ -235,6 +260,13 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.CompareTag("Bonus"))
         {
             GameManager.instance.AddPoints(10);
+
+            if (source != null && bSound != null)
+            {
+                // PlayOneShot pozwala grać dźwięk bez przerywania muzyki w tle
+                source.PlayOneShot(bSound, AudioListener.volume);
+            }
+
             collision.gameObject.SetActive(false);
         }
         else if (collision.gameObject.CompareTag("Enemy"))
@@ -243,6 +275,8 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("Killed an enemy");
                 rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, 0);
+                if (source != null && killSound != null)
+                    source.PlayOneShot(killSound, AudioListener.volume);
                 rigidBody.AddForce(Vector2.up * (jumpForce / 1.5f), ForceMode2D.Impulse);
                 GameManager.instance.AddEnemyKill();
             }
@@ -250,9 +284,12 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("You lost 1 life");
                 GameManager.instance.AddLife(-1);
+                if (source != null && deathSound != null)
+                    source.PlayOneShot(deathSound, AudioListener.volume);
                 transform.position = startPosition;
                 rigidBody.linearVelocity = Vector2.zero;
                 isClimbing = false;
+                
             }
         }
         else if (collision.gameObject.CompareTag("Live"))
@@ -270,6 +307,9 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("Collected " + keyScript.keyColor + " Key");
 
+                if (source != null && keySound != null)
+                    source.PlayOneShot(keySound, AudioListener.volume);
+
                 // Wysłanie konkretnego koloru
                 GameManager.instance.AddKey(keyScript.keyColor);
 
@@ -284,6 +324,23 @@ public class PlayerController : MonoBehaviour
         isFacingRight = !isFacingRight;
         theScale.x *= -1;
         transform.localScale = theScale;
+    }
+
+    void Shoot()
+    {
+        // Tworzymy oponę
+        GameObject bullet = Instantiate(tirePrefab, firePoint.position, firePoint.rotation);
+
+        // KLUCZOWE: Kopiujemy skalę gracza do opony!
+        // Jeśli gracz jest odwrócony w lewo (Scale X = -1), opona też dostanie -1.
+        // Dzięki temu płomień będzie z tyłu, a kod opony (z Kroku 1) nada jej prędkość w lewo.
+        bullet.transform.localScale = transform.localScale;
+
+        if (source != null && shootSound != null)
+        {
+            // Możesz lekko zmienić głośność (np. 0.8f) lub wysokość (Pitch) dla urozmaicenia
+            source.PlayOneShot(shootSound);
+        }
     }
 
 
