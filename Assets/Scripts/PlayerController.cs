@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     // Komponenty i flagi
     private Rigidbody2D rigidBody;
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
     private bool isRunning;
     private bool isFacingRight = true;
 
@@ -35,13 +36,20 @@ public class PlayerController : MonoBehaviour
     private bool isClimbing = false;  
     private float originalGravity;
 
+    [Header("Combat Settings")]
+    public bool isInvincible = false;
+    [SerializeField] private float parryDuration = 0.5f; // Jak długo trwa ochrona (0.5s)
+    [SerializeField] private float parryCooldown = 1.0f; // Żeby nie spamować kucania
+    private float lastParryTime;
+    private Color originalColor;
+
     [Header("Shooting Settings")]
     [SerializeField] private GameObject tirePrefab; 
     [SerializeField] private Transform firePoint;   
     [SerializeField] private float fireRate = 0.5f;
     private float nextFireTime = 0f;
 
-    [Header("Audio settings")]
+    [Header("Audio Settings")]
     [SerializeField] private AudioClip bSound;
     [SerializeField] private AudioClip keySound;
     [SerializeField] private AudioClip jumpSound;
@@ -57,7 +65,8 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
+
     }
 
     void Awake()
@@ -65,6 +74,8 @@ public class PlayerController : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         startPosition = transform.position;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
 
         originalGravity = rigidBody.gravityScale;
 
@@ -140,6 +151,12 @@ public class PlayerController : MonoBehaviour
                 {
                     Jump();
                 }
+            }
+
+            // kucanie
+            if ((Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)) && Time.time > lastParryTime + parryCooldown)
+            {
+                StartCoroutine(ActivateParry());
             }
 
             // Kontrola wysokości skoku
@@ -271,14 +288,40 @@ public class PlayerController : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Enemy"))
         {
+            if (isInvincible)
+            {
+                Debug.Log("PARRY! Cios zablokowany!");
+                // Dodać odrzucenie wroga i dźwięk parowania
+                return;
+            }
+
+            SmartEnemy smartEnemy = collision.gameObject.GetComponent<SmartEnemy>();
+
+            if (smartEnemy == null)
+            {
+                smartEnemy = collision.gameObject.GetComponentInParent<SmartEnemy>();
+            }
+
             if (transform.position.y > collision.gameObject.transform.position.y)
             {
-                Debug.Log("Killed an enemy");
+                //Debug.Log("Killed an enemy");
                 rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, 0);
+                rigidBody.AddForce(Vector2.up * (jumpForce / 1.5f), ForceMode2D.Impulse);
                 if (source != null && killSound != null)
                     source.PlayOneShot(killSound, AudioListener.volume);
-                rigidBody.AddForce(Vector2.up * (jumpForce / 1.5f), ForceMode2D.Impulse);
-                GameManager.instance.AddEnemyKill();
+
+                if (smartEnemy != null)
+                {
+                    smartEnemy.TakeDamage(1); // Odejmij 1 HP
+                    Debug.Log("Boss dostał obrażenia! HP: " + smartEnemy.maxHealth); // (Tu warto wyświetlać aktualne, ale widać na pasku)
+                }
+                else
+                {
+                    // ZWYKŁY WRÓG (Bez skryptu SmartEnemy) - giń od razu
+                    GameManager.instance.AddEnemyKill();
+                    Debug.Log("Killed generic enemy");
+                    collision.gameObject.SetActive(false); // Lub Destroy
+                }
             }
             else
             {
@@ -318,6 +361,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        HandleCollisions(collision.collider);
+
+        if (collision.gameObject.CompareTag("MovingPlatform"))
+        {
+            transform.SetParent(collision.transform);
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("MovingPlatform"))
+        {
+            transform.SetParent(null);
+        }
+    }
+
     void Flip()
     {   
         Vector3 theScale = transform.localScale;
@@ -341,6 +402,24 @@ public class PlayerController : MonoBehaviour
             // Możesz lekko zmienić głośność (np. 0.8f) lub wysokość (Pitch) dla urozmaicenia
             source.PlayOneShot(shootSound);
         }
+    }
+
+    System.Collections.IEnumerator ActivateParry()
+    {
+        isInvincible = true;
+        lastParryTime = Time.time;
+
+        // Wizualny efekt (Gracz robi się niebieski/przezroczysty)
+        animator.SetBool("IsCrouching", true); // Odpal animację kucania
+        spriteRenderer.color = new Color(0.5f, 0.5f, 1f, 0.8f); // Lekki niebieski
+
+        // Czekamy tyle, ile trwa "parowanie" (np. 0.5 sekundy)
+        yield return new WaitForSeconds(parryDuration);
+
+        // Koniec ochrony
+        isInvincible = false;
+        animator.SetBool("IsCrouching", false);
+        spriteRenderer.color = originalColor;
     }
 
 

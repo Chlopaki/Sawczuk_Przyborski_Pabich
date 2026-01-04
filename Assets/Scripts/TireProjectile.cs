@@ -38,6 +38,7 @@ public class TireProjectile : MonoBehaviour
         // Sprawdzamy czy trafiliœmy w coœ sensownego (Wroga, Ziemiê lub Œcianê)
         if (hitInfo.CompareTag("Enemy")|| hitInfo.CompareTag("Wall"))
         {
+
             // NOWE: DŸwiêk uderzenia (zrób to PRZED Destroy)
             if (hitSound != null)
             {
@@ -48,13 +49,26 @@ public class TireProjectile : MonoBehaviour
             // Logika zabijania wroga (jeœli trafi³eœ wroga)
             if (hitInfo.CompareTag("Enemy"))
             {
+                SmartEnemy boss = hitInfo.GetComponent<SmartEnemy>();
+
                 Debug.Log("Trafiono wroga!");
+                if (boss != null)
+                {
+                    boss.TakeDamage(1); // Zadaj obra¿enia Bossowi
+                                        // UWAGA: Nie niszczymy bossa tutaj! On sam zniknie jak HP spadnie do 0.
+                }
+                else
+                {
+                    // Zwyk³y wróg - giñ
+                    Destroy(hitInfo.gameObject);
+                    GameManager.instance.AddEnemyKill();
+                }
                 if (killSound != null)
                 {
                     AudioSource.PlayClipAtPoint(killSound, transform.position);
                 }
-                Destroy(hitInfo.gameObject);
-                GameManager.instance.AddEnemyKill();
+                //Destroy(hitInfo.gameObject);
+                //GameManager.instance.AddEnemyKill();
 
             }
 

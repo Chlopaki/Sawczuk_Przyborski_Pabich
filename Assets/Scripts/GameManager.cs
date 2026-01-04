@@ -9,7 +9,8 @@ public enum GameState
     [InspectorName("Gameplay")] GAME,
     [InspectorName("Pause")] PAUSE_MENU,
     [InspectorName("Level completed")] LEVEL_COMPLETED,
-    [InspectorName("Options")] GS_OPTIONS // Dodano stan opcji
+    [InspectorName("Options")] GS_OPTIONS, // Dodano stan opcji
+    [InspectorName("Dialogue")] DIALOGUE
 }
 
 public class GameManager : MonoBehaviour
