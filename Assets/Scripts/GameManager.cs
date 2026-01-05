@@ -4,6 +4,7 @@ using System;
 using TMPro;
 using UnityEngine.SceneManagement;
 //kupa
+// CHYBA TWOJA DZIADZIE!!!
 public enum GameState
 {
     [InspectorName("Gameplay")] GAME,
@@ -22,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Stats")]
     public int score = 0;
-    public int livesNum = 3;    // G³ówna zmienna ¿yæ (zmieniona z 3 na startow¹ wartoœæ)
+    public int livesNum = 3;
     public int keyNum = 0;
     private int defeatedEnemies = 0;
     private float gameTime = 0f;
@@ -53,6 +54,12 @@ public class GameManager : MonoBehaviour
 
     [Header("Options UI")]
     [SerializeField] public Canvas optionsCanvas; // Referencja do Canvasu opcji
+
+    [Header("NPC Moving")]
+    [SerializeField] public GameObject gepardNPC; // Przeci¹gniesz tu obiekt Geparda
+    [SerializeField] public Transform gepardDestination; // Przeci¹gniesz tu ten pusty punkt w gara¿u
+    [TextArea(3, 10)] // To sprawia, ¿e w Inspectorze bêdzie du¿e pole do pisania
+    [SerializeField] public string[] victoryDialogue;
 
     void Awake()
     {
@@ -201,6 +208,24 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    public void MoveGepard()
+    {
+        if (gepardNPC != null && gepardDestination != null)
+        {
+            Debug.Log("Przenoszenie Geparda do gara¿u...");
+            gepardNPC.transform.position = gepardDestination.position;
+            NPC_Dialogue npcScript = gepardNPC.GetComponent<NPC_Dialogue>();
+
+            if (npcScript != null)
+            {
+                npcScript.sentences = victoryDialogue;
+
+                Debug.Log("Dialog Geparda zosta³ zaktualizowany!");
+            }
+        }
+    }
+
     public void Options() => SetGameState(GameState.GS_OPTIONS);
 
     public void SetVolume(float vol) => AudioListener.volume = vol; // Ustawienie g³oœnoœci

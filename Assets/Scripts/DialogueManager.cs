@@ -15,6 +15,14 @@ public class DialogueManager : MonoBehaviour
     private Queue<string> sentences; // Kolejka zdaÒ
     private bool isDialogueActive = false;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip typingSound; // TwÛj düwiÍk "blip"
+    [Range(1, 5)][SerializeField] private int frequency = 3; // Graj düwiÍk co 2 literÍ
+    [SerializeField] private float minPitch = 0.7f; // ZmiennoúÊ g≥osu
+    [SerializeField] private float maxPitch = 0.9f;
+
+    private AudioSource source; // èrÛd≥o düwiÍku
+
     void Awake()
     {
         if (dialoguePanel != null)
@@ -24,6 +32,9 @@ public class DialogueManager : MonoBehaviour
 
         if (instance == null) instance = this;
         sentences = new Queue<string>();
+
+        source = GetComponent<AudioSource>();
+        if (source == null) source = gameObject.AddComponent<AudioSource>();
     }
 
     public void StartDialogue(string name, string[] lines)
@@ -65,10 +76,25 @@ public class DialogueManager : MonoBehaviour
     IEnumerator TypeSentence(string sentence)
     {
         dialogueText.text = "";
+        int charCount = 0; // Licznik liter
+
         foreach (char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
-            yield return new WaitForSeconds(0.02f); // SzybkoúÊ pisania
+            charCount++;
+
+            // Graj düwiÍk tylko co X liter i pomijaj spacje
+            if (charCount % frequency == 0 && !char.IsWhiteSpace(letter))
+            {
+                if (typingSound != null && source != null)
+                {
+                    // Zmiana Pitcha (tonacji) dla efektu "gadania"
+                    source.pitch = Random.Range(minPitch, maxPitch);
+                    source.PlayOneShot(typingSound);
+                }
+            }
+
+            yield return new WaitForSeconds(0.03f); // SzybkoúÊ pisania
         }
     }
 

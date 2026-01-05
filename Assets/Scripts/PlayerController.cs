@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Combat Settings")]
     public bool isInvincible = false;
+    public float damageImmunityTime = 1.5f;
     [SerializeField] private float parryDuration = 0.5f; // Jak długo trwa ochrona (0.5s)
     [SerializeField] private float parryCooldown = 1.0f; // Żeby nie spamować kucania
     private float lastParryTime;
@@ -302,11 +303,19 @@ public class PlayerController : MonoBehaviour
                 smartEnemy = collision.gameObject.GetComponentInParent<SmartEnemy>();
             }
 
-            if (transform.position.y > collision.gameObject.transform.position.y)
+            float playerBottom = GetComponent<Collider2D>().bounds.min.y;
+            float enemyTop = collision.bounds.max.y;
+
+            bool isFalling = rigidBody.linearVelocity.y <= 0.1f;
+
+            if (playerBottom > collision.bounds.center.y && isFalling)
             {
                 //Debug.Log("Killed an enemy");
                 rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, 0);
                 rigidBody.AddForce(Vector2.up * (jumpForce / 1.5f), ForceMode2D.Impulse);
+
+                StartCoroutine(BounceImmunity());
+
                 if (source != null && killSound != null)
                     source.PlayOneShot(killSound, AudioListener.volume);
 
@@ -325,8 +334,11 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
+                if (isInvincible) return;
+
                 Debug.Log("You lost 1 life");
                 GameManager.instance.AddLife(-1);
+                StartCoroutine(DamageRecovery());
                 if (source != null && deathSound != null)
                     source.PlayOneShot(deathSound, AudioListener.volume);
                 transform.position = startPosition;
@@ -420,6 +432,33 @@ public class PlayerController : MonoBehaviour
         isInvincible = false;
         animator.SetBool("IsCrouching", false);
         spriteRenderer.color = originalColor;
+    }
+
+    System.Collections.IEnumerator BounceImmunity()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(0.2f);
+        isInvincible = false;
+    }
+
+    System.Collections.IEnumerator DamageRecovery()
+    {
+        isInvincible = true;
+
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            Color original = sr.color;
+            sr.color = new Color(original.r, original.g, original.b, 0.5f); // Półprzezroczysty
+            yield return new WaitForSeconds(damageImmunityTime);
+            sr.color = original; // Wróć do normy
+        }
+        else
+        {
+            yield return new WaitForSeconds(damageImmunityTime);
+        }
+
+        isInvincible = false;
     }
 
 

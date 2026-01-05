@@ -23,6 +23,7 @@ public class SmartEnemy : MonoBehaviour
     public float diveSpeed = 10f;     // Szybkoœæ ataku
     public float prepareTime = 0.8f;  // Czas celowania przed atakiem
     public float waitOnGround = 0.5f; // Ile le¿y na ziemi zanim wróci
+    private float attackCooldown = 0f; //Ile czasu jest miêdzy atakami
     [Tooltip("Jak daleko w lewo/prawo orze³ widzi gracza")]
     [SerializeField] private float horizontalDetectRange = 8.0f;
     public Slider bossHealthBar;
@@ -59,7 +60,8 @@ public class SmartEnemy : MonoBehaviour
         {
             bossHealthBar.maxValue = maxHealth;
             bossHealthBar.value = currentHealth;
-            bossHealthBar.gameObject.SetActive(type == EnemyType.BossEagle);
+            //bossHealthBar.gameObject.SetActive(type == EnemyType.BossEagle);
+            bossHealthBar.gameObject.SetActive(false);
         }
 
         if (waypoints.Length > 0)
@@ -85,6 +87,11 @@ public class SmartEnemy : MonoBehaviour
     {
         if (isDead) return;
 
+        if (attackCooldown > 0)
+        {
+            attackCooldown -= Time.deltaTime;
+        }
+
         // Wybór zachowania zale¿nie od typu
         switch (type)
         {
@@ -103,6 +110,28 @@ public class SmartEnemy : MonoBehaviour
     // --- LOGIKA OR£A (BOSS) ---
     void HandleBossEagle()
     {
+
+        if (bossHealthBar != null && !isDead)
+        {
+            // Obliczamy dystans do gracza
+            float distToPlayer = Vector2.Distance(transform.position, playerTransform.position);
+
+            // Ustalamy zasiêg UI jako 1.75x zasiêgu wykrywania
+            float uiRange = horizontalDetectRange * 1.75f;
+
+            // Jeœli gracz jest blisko -> Poka¿ pasek. Jeœli daleko -> Ukryj.
+            if (distToPlayer < uiRange)
+            {
+                if (!bossHealthBar.gameObject.activeSelf)
+                    bossHealthBar.gameObject.SetActive(true);
+            }
+            else
+            {
+                if (bossHealthBar.gameObject.activeSelf)
+                    bossHealthBar.gameObject.SetActive(false);
+            }
+        }
+
         // Zabezpieczenie: Jeœli gracz nie istnieje/zgin¹³ -> Wracaj na górê
         if (playerTransform == null || !playerTransform.gameObject.activeInHierarchy)
         {
@@ -123,13 +152,10 @@ public class SmartEnemy : MonoBehaviour
                 bool isPlayerBelow = transform.position.y > playerTransform.position.y + 0.5f; // +0.5f marginesu
 
                 // Jeœli gracz jest blisko (10 kratek) I jest pod spodem -> ATAK
-                if (distSide < horizontalDetectRange && isPlayerBelow)
+                if (attackCooldown <= 0 && distSide < horizontalDetectRange && isPlayerBelow)
                 {
                     bossState = BossState.Preparing;
                     timer = prepareTime;
-                    Debug.Log("Orze³: Widzê gracza na dole! Szykujê Dive Attack.");
-
-                    // Od razu obracamy siê do gracza
                     FlipTowards(playerTransform.position);
                     if (anim) anim.SetBool("IsPreparing", true);
                 }
@@ -199,6 +225,8 @@ public class SmartEnemy : MonoBehaviour
                 if (Vector2.Distance(transform.position, home.position) < 0.5f)
                 {
                     bossState = BossState.Patrolling;
+
+                    attackCooldown = 2.0f;
                 }
                 break;
         }
@@ -211,6 +239,10 @@ public class SmartEnemy : MonoBehaviour
             Gizmos.color = Color.red;
             // Rysujemy prostok¹t: szerokoœæ to 2x zasiêg (lewo+prawo), wysokoœæ du¿a w dó³
             Gizmos.DrawWireCube(transform.position + Vector3.down * 5, new Vector3(horizontalDetectRange * 2, 10, 0));
+
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, horizontalDetectRange * 1.75f);
+
         }
         else if (type == EnemyType.Chaser)
         {
@@ -225,10 +257,16 @@ public class SmartEnemy : MonoBehaviour
         if (waypoints.Length == 0) return;
         Transform target = waypoints[currentPointIndex];
 
-        transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+        // Cel jest tworzony na ziemi
+        Vector2 targetOnGround = new Vector2(target.position.x, transform.position.y);
+
+        // Idziemy do "celu na ziemi"
+        transform.position = Vector2.MoveTowards(transform.position, targetOnGround, speed * Time.deltaTime);
+
         FlipTowards(target.position);
 
-        if (Vector2.Distance(transform.position, target.position) < 0.2f)
+        // Sprawdzamy tylko dystans w poziomie (X), ¿eby zaliczy³ punkt nawet jak jest nad nim
+        if (Mathf.Abs(transform.position.x - target.position.x) < 0.2f)
         {
             currentPointIndex = (currentPointIndex + 1) % waypoints.Length;
         }
@@ -240,12 +278,10 @@ public class SmartEnemy : MonoBehaviour
 
         if (dist < detectRange)
         {
-            // --- NOWOŒÆ: Blokada terytorium ---
             // 1. Gdzie jest gracz?
             float targetX = playerTransform.position.x;
 
             // 2. Jeœli gracz jest poza terenem, pies celuje w granicê (p³ot)
-            // Mathf.Clamp(wartoœæ, min, max) -> Zwraca wartoœæ, ale nie mniejsz¹ ni¿ min i nie wiêksz¹ ni¿ max
             targetX = Mathf.Clamp(targetX, minX, maxX);
 
             // 3. Obliczamy, czy pies ma gdzie iœæ (odleg³oœæ do zablokowanego celu)
@@ -314,13 +350,36 @@ public class SmartEnemy : MonoBehaviour
         if (anim) anim.SetTrigger("Hurt");
         StartCoroutine(FlashRed());
 
+        if (type == EnemyType.BossEagle && currentHealth > 0)
+        {
+            // 1. Resetujemy fizykê, ¿eby Orze³ nie kozio³kowa³ od uderzenia
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+            }
+
+            // 2. Zmuszamy go do odwrotu (lotu w górê do waypointów)
+            bossState = BossState.Returning;
+
+            timer = 0;
+        }
+
         if (currentHealth <= 0) Die();
     }
 
     void Die()
     {
+
+        if (isDead) return;
         isDead = true;
         GetComponent<Collider2D>().enabled = false;
+
+        if (type == EnemyType.BossEagle)
+        {
+            GameManager.instance.MoveGepard();
+        }
+
         if (bossHealthBar) bossHealthBar.gameObject.SetActive(false);
         if (anim) anim.SetTrigger("Death");
 
@@ -329,6 +388,7 @@ public class SmartEnemy : MonoBehaviour
             Instantiate(lootDrop, transform.position, Quaternion.identity);
         }
 
+        GameManager.instance.AddEnemyKill();
         Destroy(gameObject, 0.5f);
     }
 
