@@ -10,7 +10,8 @@ public enum GameState
     [InspectorName("Gameplay")] GAME,
     [InspectorName("Pause")] PAUSE_MENU,
     [InspectorName("Level completed")] LEVEL_COMPLETED,
-    [InspectorName("Options")] GS_OPTIONS, // Dodano stan opcji
+    [InspectorName("Options")] GS_OPTIONS,
+    [InspectorName("Game Over")] GAME_OVER,
     [InspectorName("Dialogue")] DIALOGUE
 }
 
@@ -32,6 +33,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Canvas gameCanvas;
     [SerializeField] public Canvas pauseMenuCanvas;
     [SerializeField] public Canvas levelCompleted;
+
+    [Header("UI Screens")]
+    [SerializeField] public Canvas gameOverCanvas;
+
 
     [Header("UI References")]
     [SerializeField] private Image[] keyIcons;
@@ -186,10 +191,13 @@ public class GameManager : MonoBehaviour
 
         if (pauseMenuCanvas != null)
             pauseMenuCanvas.enabled = (currentGameState == GameState.PAUSE_MENU);
-        if (optionsCanvas != null) optionsCanvas.enabled = (currentGameState == GameState.GS_OPTIONS); //
+        if (optionsCanvas != null) optionsCanvas.enabled = (currentGameState == GameState.GS_OPTIONS);
+        if (gameOverCanvas != null) gameOverCanvas.enabled = (currentGameState == GameState.GAME_OVER);
 
         // Zamro¿enie czasu w menu
         Time.timeScale = (currentGameState == GameState.PAUSE_MENU || currentGameState == GameState.GS_OPTIONS) ? 0f : 1f;
+
+        
 
         if (levelCompleted != null)
         {
@@ -256,13 +264,19 @@ public class GameManager : MonoBehaviour
     public void LevelCompleted()
     {
         SetGameState(GameState.LEVEL_COMPLETED);
+
+        // ¯adnego sprawdzania "if level 1", "if level 2".
+        // Po prostu w³¹czamy to, co jest przypisane w tej scenie.
+        if (levelCompleted != null)
+        {
+            levelCompleted.enabled = true;
+        }
     }
 
     void GameOver()
     {
         Debug.Log("Game Over!");
-        // Tutaj mo¿na dodaæ osobny ekran Game Over, na razie u¿ywamy LevelCompleted lub restartu
-        SetGameState(GameState.LEVEL_COMPLETED);
+        SetGameState(GameState.GAME_OVER);
     }
 
     void PauseMenu()
