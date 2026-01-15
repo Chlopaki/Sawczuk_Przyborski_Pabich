@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  maxHealth: 5
+  maxHealth: 1
   speed: 1
   damageToPlayer: 1
   waypoints:
@@ -181,7 +181,7 @@ MonoBehaviour:
   waitOnGround: 0.5
   horizontalDetectRange: 4
   bossHealthBar: {fileID: 0}
-  lootDrop: {fileID: 0}
+  lootDrop: {fileID: 6398483949580028686, guid: 4e3ddc916b7f07b479dd1b144e544a36, type: 3}
 --- !u!61 &3376722867861367220
 BoxCollider2D:
   m_ObjectHideFlags: 0
