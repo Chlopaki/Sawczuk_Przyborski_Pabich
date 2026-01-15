@@ -1,5 +1,5 @@
 using UnityEngine;
-using TMPro;
+using TMPro; // U¿ywamy TextMeshPro (jeœli u¿ywasz zwyk³ego Text, zmieñ na: using UnityEngine.UI;)
 using System.Collections;
 using System.Collections.Generic;
 
@@ -14,8 +14,6 @@ public class DialogueManager : MonoBehaviour
 
     private Queue<string> sentences; // Kolejka zdañ
     private bool isDialogueActive = false;
-    private bool isTyping = false;
-    private string currentSentence = "";
 
     [Header("Audio Settings")]
     [SerializeField] private AudioClip typingSound; // Twój dŸwiêk "blip"
@@ -69,17 +67,14 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        currentSentence = sentences.Dequeue();
-
-        //string sentence = sentences.Dequeue();
+        string sentence = sentences.Dequeue();
         StopAllCoroutines(); // Zatrzymuje poprzednie pisanie, jeœli gracz klika szybko
-        StartCoroutine(TypeSentence(currentSentence));
+        StartCoroutine(TypeSentence(sentence));
     }
 
     // Efekt pisania na maszynie
     IEnumerator TypeSentence(string sentence)
     {
-        isTyping = true;
         dialogueText.text = "";
         int charCount = 0; // Licznik liter
 
@@ -101,7 +96,6 @@ public class DialogueManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.03f); // Szybkoœæ pisania
         }
-        isTyping = false; // --- ZMIANA 4: Skoñczyliœmy pisaæ
     }
 
     void EndDialogue()
@@ -121,18 +115,7 @@ public class DialogueManager : MonoBehaviour
         // Przewijanie dialogu spacj¹ lub myszk¹
         if (isDialogueActive && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
-            if (isTyping)
-            {
-                // Jeœli tekst siê pisze -> Przerwij i poka¿ ca³oœæ
-                StopAllCoroutines();
-                dialogueText.text = currentSentence;
-                isTyping = false;
-            }
-            else
-            {
-                // Jeœli tekst jest ju¿ ca³y -> Poka¿ nastêpny
-                DisplayNextSentence();
-            }
+            DisplayNextSentence();
         }
     }
 }
