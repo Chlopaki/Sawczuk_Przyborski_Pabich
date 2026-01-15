@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Transform gepardDestination; // Przeci¹gniesz tu ten pusty punkt w gara¿u
     [TextArea(3, 10)] // To sprawia, ¿e w Inspectorze bêdzie du¿e pole do pisania
     [SerializeField] public string[] victoryDialogue;
+    public int keysToTeleport = 3;
 
     void Awake()
     {
@@ -172,6 +173,10 @@ public class GameManager : MonoBehaviour
         collectedKeys[keyIndex] = true;
         keyNum ++;
         UpdateUI();
+        if (keyNum >= keysToTeleport)
+        {
+            MoveGepard();
+        }
     }
 
     public void AddEnemyKill()
@@ -247,6 +252,26 @@ public class GameManager : MonoBehaviour
     public void OnResumeButtonClick()
     {
         InGame();
+    }
+
+    public void OnLevel1ButtonClick()
+    {
+        SceneManager.LoadScene("118");
+    }
+
+    public void OnLevel2ButtonClick()
+    {
+        SceneManager.LoadScene("Level2");
+    }
+
+    public void OnLevel3ButtonClick()
+    {
+        SceneManager.LoadScene("Level 3");
+    }
+
+    public void OnLevel4ButtonClick()
+    {
+        SceneManager.LoadScene("Level 4");
     }
 
     public void OnRestartButtonClick()

@@ -642,6 +642,34 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4280929279
       objectReference: {fileID: 0}
+    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1912440725}
+    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnLevel2ButtonClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3824865510209748637, guid: e664078dea22483499def1f56d4cf324, type: 3}
       propertyPath: m_Name
       value: Level2Button
@@ -2483,11 +2511,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.6928797
+      value: 4.542
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.2235687
+      value: -1.231
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2523,19 +2551,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.21
+      value: -0.543
       objectReference: {fileID: 0}
     - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.268
+      value: 1.331
       objectReference: {fileID: 0}
     - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.817
+      value: 2.3
       objectReference: {fileID: 0}
     - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.296
+      value: 1.312
       objectReference: {fileID: 0}
     - target: {fileID: 5661253925017708055, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_Size.x
@@ -5958,7 +5986,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -63374,6 +63402,7 @@ MonoBehaviour:
     Imponuj\u0105cy!"
   - "Teraz odpocznij. Mamy d\u0142ugi weekend wy\u015Bcigowy przed sob\u0105. Dzi\u0119ki
     za pomoc."
+  keysToTeleport: 3
 --- !u!114 &1912440726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65580,6 +65609,24 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
+      propertyPath: 'sentences.Array.data[3]'
+      value: "Musimy odbudowa\u0107 auto. Potrzebne jest zawieszenie, silnik i...
+        skrzynia. Z t\u0105 ostatni\u0105 b\u0119dzie problem. Zabra\u0142 j\u0105
+        jeden Orze\u0142 D\u017Cord\u017C. Bardzo agresywny zawodnik, nie zostawia
+        miejsca na torze."
+      objectReference: {fileID: 0}
+    - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
+      propertyPath: 'sentences.Array.data[5]'
+      value: "Reszta \"zawodnik\xF3w\" jest bardziej wymagaj\u0105ca. Musisz na nich
+        uwa\u017Ca\u0107... Szczeg\xF3lnie na tego Or\u0142a D\u017Cord\u017Ca"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
+      propertyPath: 'sentences.Array.data[8]'
+      value: "Dobra. Teraz masz tajemnicze zdolno\u015Bci. [L-ctrl] to moja ulubiona
+        sztuczka p\xF3\u0142zmy\u0142ka, taki unik. A pod [F] masz... eeee, wyrzut
+        zu\u017Cytych opon. P\u0142on\u0105cych. Taka nasza strategia oponiarska."
+      objectReference: {fileID: 0}
     - target: {fileID: 4252301592013299750, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.56
@@ -65861,11 +65908,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.8992357
+      value: -7.129
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.9955659
+      value: -2.086
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.z
@@ -65898,6 +65945,22 @@ PrefabInstance:
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.852
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.358
+      objectReference: {fileID: 0}
+    - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4.055
+      objectReference: {fileID: 0}
+    - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.372
       objectReference: {fileID: 0}
     - target: {fileID: 5661253925017708055, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_Size.x
