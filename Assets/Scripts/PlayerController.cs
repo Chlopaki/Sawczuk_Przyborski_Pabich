@@ -3,26 +3,45 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class PlayerController : MonoBehaviour
 {
-    [HeaderAttribute( "Movment parameters")]
-    [Range(0.01f, 20.0f)] [SerializeField] private float jumpForce = 1.0f;
-    [Range(0.0f, 1.0f)][SerializeField] private float jumpCutMultiplier = 0.5f; // Jak ucina skok po puszczeniu przycisku
+    [HeaderAttribute("Movment parameters")]
+    [Range(0.01f, 20.0f)][SerializeField] private float jumpForce = 1.0f;
+    [Range(0.0f, 1.0f)][SerializeField] private float jumpCutMultiplier = 0.5f;
     [Space(10)]
-    [Range( 0.01f, 20.0f)] [SerializeField] private float moveSpeed = 0.1f;
+    [Range(0.01f, 20.0f)][SerializeField] private float moveSpeed = 0.1f;
     [Space(10)]
     [Range(0.01f, 20.0f)][SerializeField] private float climbSpeed = 3.0f;
 
     private Vector2 startPosition;
-   
-
-    //const float rayLength = 0.25f;
-
-
 
     [Header("Ground Check settings")]
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Vector2 boxSize = new Vector2(0.110422f, 0.1f); //wielkość sprawdzania
-    [SerializeField] private float checkDistance = 0.05f; // dystans detekcji
+    [SerializeField] private Vector2 boxSize = new Vector2(0.110422f, 0.1f);
+    [SerializeField] private float checkDistance = 0.05f;
     [SerializeField] private Vector2 groundCheckOffset;
+
+    // --- SYSTEM WIATRU: Nowe ustawienia ---
+    [Header("Wind Settings")]
+    [Tooltip("Włącz lub wyłącz całkowicie mechanikę wiatru.")]
+    [SerializeField] private bool enableWindSystem = true; // NOWOŚĆ: Główny przełącznik
+
+    [Tooltip("Obiekt grupulący efekty wizualne wiatru (np. 'Wiatr' z hierarchii).")]
+    [SerializeField] private GameObject windEffectGroup;   // NOWOŚĆ: Obiekt z animacjami
+
+    [Tooltip("Maksymalna siła wiatru w szczytowym momencie.")]
+    [SerializeField] private float windMaxForce = 10.0f;
+    [Tooltip("Jak długo trwa jeden podmuch.")]
+    [SerializeField] private float windDuration = 3.0f;
+    [Tooltip("Minimalny czas przerwy między podmuchami.")]
+    [SerializeField] private float windInterval = 5.0f;
+    [Tooltip("Szansa na zerwanie się wiatru (0.2 = 20%).")]
+    [Range(0f, 1f)][SerializeField] private float windChance = 0.2f;
+
+    // Zmienne wewnętrzne wiatru
+    private bool isWindActive = false;
+    private float windTimer = 0f;
+    private float windCooldownTimer = 0f;
+    private float nextWindCheckTime = 0f;
+    private float windCheckRate = 0.25f;
 
     // Komponenty i flagi
     private Rigidbody2D rigidBody;
@@ -32,21 +51,21 @@ public class PlayerController : MonoBehaviour
     private bool isFacingRight = true;
 
     //drabina
-    private bool canClimb = false;    
-    private bool isClimbing = false;  
+    private bool canClimb = false;
+    private bool isClimbing = false;
     private float originalGravity;
 
     [Header("Combat Settings")]
     public bool isInvincible = false;
     public float damageImmunityTime = 1.5f;
-    [SerializeField] private float parryDuration = 0.5f; // Jak długo trwa ochrona (0.5s)
-    [SerializeField] private float parryCooldown = 1.0f; // Żeby nie spamować kucania
+    [SerializeField] private float parryDuration = 0.5f;
+    [SerializeField] private float parryCooldown = 1.0f;
     private float lastParryTime;
     private Color originalColor;
 
     [Header("Shooting Settings")]
-    [SerializeField] private GameObject tirePrefab; 
-    [SerializeField] private Transform firePoint;   
+    [SerializeField] private GameObject tirePrefab;
+    [SerializeField] private Transform firePoint;
     [SerializeField] private float fireRate = 0.5f;
     private float nextFireTime = 0f;
 
@@ -62,12 +81,15 @@ public class PlayerController : MonoBehaviour
 
     private AudioSource source;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        windCooldownTimer = windInterval;
 
-
+        // NOWOŚĆ: Na starcie ukrywamy wizualizacje wiatru (jeśli są przypisane)
+        if (windEffectGroup != null)
+        {
+            windEffectGroup.SetActive(false);
+        }
     }
 
     void Awake()
@@ -83,12 +105,12 @@ public class PlayerController : MonoBehaviour
         source = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-
         if (GameManager.instance.currentGameState == GameState.GAME)
         {
+            HandleWind(); // Obsługa wiatru
+
             isRunning = false;
 
             float verticalInput = Input.GetAxisRaw("Vertical");
@@ -96,34 +118,25 @@ public class PlayerController : MonoBehaviour
             {
                 transform.Translate(moveSpeed * Time.deltaTime, 0.0f, 0.0f, Space.World);
                 isRunning = true;
-                //isFacingRight = true;
-                if (!isFacingRight)
-                {
-                    Flip();
-                }
+                if (!isFacingRight) Flip();
             }
             else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
             {
                 transform.Translate(-moveSpeed * Time.deltaTime, 0.0f, 0.0f, Space.World);
                 isRunning = true;
-                //isFacingRight = false;
-                if (isFacingRight)
-                {
-                    Flip();
-                }
+                if (isFacingRight) Flip();
             }
 
             else if (Input.GetKeyDown(KeyCode.F) && Time.time >= nextFireTime)
             {
                 Shoot();
-                nextFireTime = Time.time + fireRate; // Reset licznika czasu
+                nextFireTime = Time.time + fireRate;
             }
 
             if ((Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Space)))
             {
                 if (rigidBody.linearVelocity.y > 0)
                 {
-                    // zmmniejszanie prędkości wznoszenia
                     rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y * jumpCutMultiplier);
                 }
             }
@@ -135,32 +148,24 @@ public class PlayerController : MonoBehaviour
 
             if (isClimbing)
             {
-                // wyłączenie grawitacji i zmiana prędkości pionowej
                 rigidBody.gravityScale = 0f;
                 rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, verticalInput * climbSpeed);
             }
             else
             {
-                // Przywrócenie grawitacji po wspinaniu się WAŻNE!!!
                 rigidBody.gravityScale = originalGravity;
             }
 
-            // Skok
             if ((Input.GetKeyDown(KeyCode.Space)))
             {
-                if (IsGround() || isClimbing)
-                {
-                    Jump();
-                }
+                if (IsGround() || isClimbing) Jump();
             }
 
-            // kucanie
             if ((Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)) && Time.time > lastParryTime + parryCooldown)
             {
                 StartCoroutine(ActivateParry());
             }
 
-            // Kontrola wysokości skoku
             if ((Input.GetKeyUp(KeyCode.Space)))
             {
                 if (rigidBody.linearVelocity.y > 0 && !isClimbing)
@@ -168,40 +173,115 @@ public class PlayerController : MonoBehaviour
                     rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y * jumpCutMultiplier);
                 }
             }
-            //Debug.DrawRay(transform.position, rayLength * Vector3.down, Color.blue, 0.2f, false);
+
             animator.SetBool("IsGrounded", IsGround());
             animator.SetBool("IsRunning", isRunning);
             animator.SetBool("IsClimbing", isClimbing);
-            // Przesłanie szybkości wspiania się do animatora (by tego noo wiedzieć kiedy stoi podczas wpsinaczki)
             animator.SetFloat("ClimbSpeed", Mathf.Abs(verticalInput));
         }
     }
 
+    // --- SYSTEM WIATRU: Zaktualizowana logika ---
+    void HandleWind()
+    {
+        // 1. Sprawdzenie głównego przełącznika (NOWOŚĆ)
+        if (!enableWindSystem)
+        {
+            // Jeśli wyłączyliśmy system w trakcie trwania wiatru, musimy posprzątać
+            if (isWindActive)
+            {
+                isWindActive = false;
+                if (windEffectGroup != null) windEffectGroup.SetActive(false);
+            }
+            return; // Wychodzimy, nie wykonujemy logiki wiatru
+        }
+
+        if (isWindActive)
+        {
+            windTimer += Time.deltaTime;
+
+            float halfDuration = windDuration / 2.0f;
+            float currentWindStrength = 0f;
+
+            if (windTimer <= halfDuration)
+            {
+                currentWindStrength = Mathf.Lerp(0, windMaxForce, windTimer / halfDuration);
+            }
+            else
+            {
+                float timeInSecondHalf = windTimer - halfDuration;
+                currentWindStrength = Mathf.Lerp(windMaxForce, 0, timeInSecondHalf / halfDuration);
+            }
+
+            rigidBody.AddForce(Vector2.left *  currentWindStrength / 2);
+
+            // Zakończenie wiatru
+            if (windTimer >= windDuration)
+            {
+                isWindActive = false;
+                windCooldownTimer = windInterval;
+
+                // NOWOŚĆ: Wyłączenie wizualizacji po zakończeniu
+                if (windEffectGroup != null)
+                {
+                    windEffectGroup.SetActive(false);
+                }
+
+                Debug.Log("Koniec wiatru.");
+            }
+        }
+        else
+        {
+            if (windCooldownTimer > 0)
+            {
+                windCooldownTimer -= Time.deltaTime;
+            }
+            else
+            {
+                if (Time.time >= nextWindCheckTime)
+                {
+                    nextWindCheckTime = Time.time + windCheckRate;
+                    if (Random.value <= windChance)
+                    {
+                        StartWind();
+                    }
+                }
+            }
+        }
+    }
+
+    void StartWind()
+    {
+        isWindActive = true;
+        windTimer = 0f;
+
+        // NOWOŚĆ: Włączenie wizualizacji
+        if (windEffectGroup != null)
+        {
+            windEffectGroup.SetActive(true);
+        }
+
+        Debug.Log("Wiatr się zerwał!");
+    }
+    // --- KONIEC SYSTEMU WIATRU ---
 
 
     bool IsGround()
     {
-        //ustalenie środku z offsetem
         float direction = Mathf.Sign(transform.localScale.x);
         Vector2 realOffset = new Vector2(groundCheckOffset.x * direction, groundCheckOffset.y);
         Vector2 origin = (Vector2)transform.position + realOffset;
 
-        // MARGINES BEZPIECZEŃSTWA:
-        // Odejmuje trochę od szerokości, żeby promienie nie szły po samej krawędzi kolidera coś z tym by nie biegać po ścianach
         float footSpacing = (boxSize.x / 2) - 0.02f;
 
-        // Pozycja lewej i prawej st00pki
         Vector2 leftOrigin = origin + Vector2.left * footSpacing;
         Vector2 rightOrigin = origin + Vector2.right * footSpacing;
 
-        //Teraz są dwa promienie z każdej syrki
         RaycastHit2D leftHit = Physics2D.Raycast(leftOrigin, Vector2.down, checkDistance, groundLayer);
         RaycastHit2D rightHit = Physics2D.Raycast(rightOrigin, Vector2.down, checkDistance, groundLayer);
 
-        // Jeśli któryś trafił to stoimy na ziemi (można później modyfikacje zrobić że gdy jeden jest tylko to połowa siły skoku jest tylko)
         return leftHit.collider != null || rightHit.collider != null;
     }
-
 
     void Jump()
     {
@@ -210,21 +290,18 @@ public class PlayerController : MonoBehaviour
 
         rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, 0);
         rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-        //Debug.Log("Lisu Skacze wariacie");
 
         if (source != null && jumpSound != null)
             source.PlayOneShot(jumpSound, AudioListener.volume);
     }
-    
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // Sprawdź tag i upewnij się, że platforma jest aktywna w hierarchii
         if (collision.CompareTag("MovingPlatform") || collision.CompareTag("WayPointPlatform"))
         {
             if (collision.gameObject.activeInHierarchy)
             {
-                transform.SetParent(collision.transform); // Gracz staje się dzieckiem platformy
+                transform.SetParent(collision.transform);
             }
         }
 
@@ -232,21 +309,15 @@ public class PlayerController : MonoBehaviour
         {
             canClimb = true;
         }
-        //logika z OnTriggerEnter2D w HandleCollisions
-        /*if (collision.CompareTag("LevelExit"))
-        {
-            GameManager.instance.score=GameManager.instance.score + 100 * GameManager.instance.livesNum; // bonus za ukończenie poziomu
-            GameManager.instance.LevelCompleted();
-        }*/
+
         HandleCollisions(collision);
     }
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        // Po wyjściu z triggera platformy, czyścimy rodzica (parent = null)
         if (collision.CompareTag("MovingPlatform") || collision.CompareTag("WayPointPlatform"))
         {
-            transform.SetParent(null); // Przywraca gracza do głównej hierarchii
+            transform.SetParent(null);
         }
         else if (collision.CompareTag("Ladder"))
         {
@@ -260,7 +331,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("LevelExit") && GameManager.instance.keyNum == 3)
         {
             Debug.Log("Game over");
-            GameManager.instance.score = GameManager.instance.score + 100 * GameManager.instance.livesNum; // bonus za ukończenie poziomu
+            GameManager.instance.score = GameManager.instance.score + 100 * GameManager.instance.livesNum;
             if (source != null && levelPassedSound != null)
                 source.PlayOneShot(levelPassedSound, AudioListener.volume);
             GameManager.instance.LevelCompleted();
@@ -268,23 +339,19 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.CompareTag("LevelFall"))
         {
             Debug.Log("You fall");
-            //transform.SetParent(null);
             GameManager.instance.AddLife(-1);
             Debug.Log("You have lost 1 life");
             transform.position = startPosition;
             rigidBody.linearVelocity = Vector2.zero;
-            isClimbing = false; // reset wspinaczki po śmierci
+            isClimbing = false;
         }
         else if (collision.gameObject.CompareTag("Bonus"))
         {
             GameManager.instance.AddPoints(10);
-
             if (source != null && bSound != null)
             {
-                // PlayOneShot pozwala grać dźwięk bez przerywania muzyki w tle
                 source.PlayOneShot(bSound, AudioListener.volume);
             }
-
             collision.gameObject.SetActive(false);
         }
         else if (collision.gameObject.CompareTag("Enemy"))
@@ -292,25 +359,17 @@ public class PlayerController : MonoBehaviour
             if (isInvincible)
             {
                 Debug.Log("PARRY! Cios zablokowany!");
-                // Dodać odrzucenie wroga i dźwięk parowania
                 return;
             }
 
             SmartEnemy smartEnemy = collision.gameObject.GetComponent<SmartEnemy>();
-
-            if (smartEnemy == null)
-            {
-                smartEnemy = collision.gameObject.GetComponentInParent<SmartEnemy>();
-            }
+            if (smartEnemy == null) smartEnemy = collision.gameObject.GetComponentInParent<SmartEnemy>();
 
             float playerBottom = GetComponent<Collider2D>().bounds.min.y;
-            float enemyTop = collision.bounds.max.y;
-
             bool isFalling = rigidBody.linearVelocity.y <= 0.1f;
 
             if (playerBottom > collision.bounds.center.y && isFalling)
             {
-                //Debug.Log("Killed an enemy");
                 rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.x, 0);
                 rigidBody.AddForce(Vector2.up * (jumpForce / 1.5f), ForceMode2D.Impulse);
 
@@ -321,15 +380,14 @@ public class PlayerController : MonoBehaviour
 
                 if (smartEnemy != null)
                 {
-                    smartEnemy.TakeDamage(1); // Odejmij 1 HP
-                    Debug.Log("Boss dostał obrażenia! HP: " + smartEnemy.maxHealth); // (Tu warto wyświetlać aktualne, ale widać na pasku)
+                    smartEnemy.TakeDamage(1);
+                    Debug.Log("Boss dostał obrażenia! HP: " + smartEnemy.maxHealth);
                 }
                 else
                 {
-                    // ZWYKŁY WRÓG (Bez skryptu SmartEnemy) - giń od razu
                     GameManager.instance.AddEnemyKill();
                     Debug.Log("Killed generic enemy");
-                    collision.gameObject.SetActive(false); // Lub Destroy
+                    collision.gameObject.SetActive(false);
                 }
             }
             else
@@ -344,7 +402,6 @@ public class PlayerController : MonoBehaviour
                 transform.position = startPosition;
                 rigidBody.linearVelocity = Vector2.zero;
                 isClimbing = false;
-                
             }
         }
         else if (collision.gameObject.CompareTag("Live"))
@@ -355,19 +412,14 @@ public class PlayerController : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Key"))
         {
-            // Pobieramy skrypt z klucza, żeby wiedzieć jaki ma kolor
             KeyItem keyScript = collision.gameObject.GetComponent<KeyItem>();
 
             if (keyScript != null)
             {
                 Debug.Log("Collected " + keyScript.keyColor + " Key");
-
                 if (source != null && keySound != null)
                     source.PlayOneShot(keySound, AudioListener.volume);
-
-                // Wysłanie konkretnego koloru
                 GameManager.instance.AddKey(keyScript.keyColor);
-
                 collision.gameObject.SetActive(false);
             }
         }
@@ -376,7 +428,6 @@ public class PlayerController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         HandleCollisions(collision.collider);
-
         if (collision.gameObject.CompareTag("MovingPlatform"))
         {
             transform.SetParent(collision.transform);
@@ -392,7 +443,7 @@ public class PlayerController : MonoBehaviour
     }
 
     void Flip()
-    {   
+    {
         Vector3 theScale = transform.localScale;
         isFacingRight = !isFacingRight;
         theScale.x *= -1;
@@ -401,17 +452,10 @@ public class PlayerController : MonoBehaviour
 
     void Shoot()
     {
-        // Tworzymy oponę
         GameObject bullet = Instantiate(tirePrefab, firePoint.position, firePoint.rotation);
-
-        // KLUCZOWE: Kopiujemy skalę gracza do opony!
-        // Jeśli gracz jest odwrócony w lewo (Scale X = -1), opona też dostanie -1.
-        // Dzięki temu płomień będzie z tyłu, a kod opony (z Kroku 1) nada jej prędkość w lewo.
         bullet.transform.localScale = transform.localScale;
-
         if (source != null && shootSound != null)
         {
-            // Możesz lekko zmienić głośność (np. 0.8f) lub wysokość (Pitch) dla urozmaicenia
             source.PlayOneShot(shootSound);
         }
     }
@@ -420,15 +464,9 @@ public class PlayerController : MonoBehaviour
     {
         isInvincible = true;
         lastParryTime = Time.time;
-
-        // Wizualny efekt (Gracz robi się niebieski/przezroczysty)
-        animator.SetBool("IsCrouching", true); // Odpal animację kucania
-        spriteRenderer.color = new Color(0.5f, 0.5f, 1f, 0.8f); // Lekki niebieski
-
-        // Czekamy tyle, ile trwa "parowanie" (np. 0.5 sekundy)
+        animator.SetBool("IsCrouching", true);
+        spriteRenderer.color = new Color(0.5f, 0.5f, 1f, 0.8f);
         yield return new WaitForSeconds(parryDuration);
-
-        // Koniec ochrony
         isInvincible = false;
         animator.SetBool("IsCrouching", false);
         spriteRenderer.color = originalColor;
@@ -444,52 +482,34 @@ public class PlayerController : MonoBehaviour
     System.Collections.IEnumerator DamageRecovery()
     {
         isInvincible = true;
-
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null)
         {
             Color original = sr.color;
-            sr.color = new Color(original.r, original.g, original.b, 0.5f); // Półprzezroczysty
+            sr.color = new Color(original.r, original.g, original.b, 0.5f);
             yield return new WaitForSeconds(damageImmunityTime);
-            sr.color = original; // Wróć do normy
+            sr.color = original;
         }
         else
         {
             yield return new WaitForSeconds(damageImmunityTime);
         }
-
         isInvincible = false;
     }
-
 
     private void OnDrawGizmosSelected()
     {
         if (transform == null) return;
-
-        // Oblicza pozycje startowe (tak samo jak w IsGround)
         float direction = Mathf.Sign(transform.localScale.x);
         Vector2 realOffset = new Vector2(groundCheckOffset.x * direction, groundCheckOffset.y);
         Vector2 origin = (Vector2)transform.position + realOffset;
-
         float footSpacing = (boxSize.x / 2) - 0.02f;
         Vector2 leftOrigin = origin + Vector2.left * footSpacing;
         Vector2 rightOrigin = origin + Vector2.right * footSpacing;
-
-        // Sprawdzenie czy dotyka ziemi w celu wybrania koloru
         bool isHitLeft = Physics2D.Raycast(leftOrigin, Vector2.down, checkDistance, groundLayer);
         bool isHitRight = Physics2D.Raycast(rightOrigin, Vector2.down, checkDistance, groundLayer);
-
-        // Wybieranie koloru: Zielony jeśli dotyka, Czerwony jeśli powietrze
-        if (isHitLeft || isHitRight)
-        {
-            Gizmos.color = Color.green;
-        }
-        else
-        {
-            Gizmos.color = Color.red;
-        }
-
-        // Rysowaine promieni
+        if (isHitLeft || isHitRight) Gizmos.color = Color.green;
+        else Gizmos.color = Color.red;
         Gizmos.DrawLine(leftOrigin, leftOrigin + Vector2.down * checkDistance);
         Gizmos.DrawLine(rightOrigin, rightOrigin + Vector2.down * checkDistance);
     }

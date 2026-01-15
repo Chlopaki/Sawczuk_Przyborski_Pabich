@@ -1045,7 +1045,7 @@ GameObject:
   m_Component:
   - component: {fileID: 286220812}
   - component: {fileID: 286220813}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Quality
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3123,7 +3123,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 2
   far clip plane: 1000
   field of view: 12
   orthographic: 0
@@ -3152,11 +3152,11 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: -1.206, y: 0.841, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1987566153}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &519420033
 MonoBehaviour:
@@ -3170,10 +3170,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a823b529bf37b24abcc3cc9d0773733, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xMargin: 1
-  yMargin: 1
-  xSmooth: 2
-  ySmooth: 2
+  xMargin: 0.1
+  yMargin: 0.1
+  xSmooth: 5
+  ySmooth: 5
   maxXAndY: {x: 1000, y: 200}
   minXAndY: {x: -5, y: -4}
 --- !u!1 &553151269
@@ -6221,7 +6221,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1129205870}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8731,7 +8731,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1449896094}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18733,7 +18733,7 @@ TilemapCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: f18fcee37f538b34286033d80e730392, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -63742,7 +63742,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 519420032}
   - {fileID: 1008977323}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -63760,9 +63759,9 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_AngularDamping: 0
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: cc6609599156a88458d586245f974395, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -63771,7 +63770,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 4
 --- !u!61 &1987566155
 BoxCollider2D:
@@ -63783,7 +63782,7 @@ BoxCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: cc6609599156a88458d586245f974395, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -64385,7 +64384,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2074383353}
   - component: {fileID: 2074383354}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: QualityButtonsHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65223,6 +65222,10 @@ PrefabInstance:
       propertyPath: m_Offset.y
       value: -0.07553929
       objectReference: {fileID: 0}
+    - target: {fileID: 1188977033222215746, guid: d337f3a9e1f3fdb4e9d31ecdf09e092d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5459428807717759427, guid: d337f3a9e1f3fdb4e9d31ecdf09e092d, type: 3}
       propertyPath: m_Name
       value: Slime
@@ -65234,6 +65237,14 @@ PrefabInstance:
     - target: {fileID: 6738949177805711940, guid: d337f3a9e1f3fdb4e9d31ecdf09e092d, type: 3}
       propertyPath: m_Offset.y
       value: -0.076183796
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386262831983731706, guid: d337f3a9e1f3fdb4e9d31ecdf09e092d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386262831983731706, guid: d337f3a9e1f3fdb4e9d31ecdf09e092d, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8959213866479610273, guid: d337f3a9e1f3fdb4e9d31ecdf09e092d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -66118,6 +66129,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 619394802}
   - {fileID: 1912440724}
+  - {fileID: 519420032}
   - {fileID: 1987566153}
   - {fileID: 580864997}
   - {fileID: 224406043}
