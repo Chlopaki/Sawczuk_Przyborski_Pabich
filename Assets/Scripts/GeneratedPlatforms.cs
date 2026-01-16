@@ -8,8 +8,8 @@ public class GeneratedPlatforms : MonoBehaviour
     private GameObject[] platforms;
 
     [Header("Ustawienia ruchu")]
-    [SerializeField] private float rotationSpeed = 1.0f;  // Prêdkoœæ obrotu (radiany na sekundê)
-    [SerializeField] private float radius = 9.0f; // Promieñ okrêgu
+    [SerializeField] private float rotationSpeed = 1.0f;  // Prï¿½dkoï¿½ï¿½ obrotu (radiany na sekundï¿½)
+    [SerializeField] private float radius = 9.0f; // Promieï¿½ okrï¿½gu
 
     void Awake()
     {
@@ -24,22 +24,22 @@ public class GeneratedPlatforms : MonoBehaviour
 
     void Update()
     {
-        // Obliczamy odstêp k¹towy miêdzy platformami (sta³y)
+        // Obliczamy odstï¿½p kï¿½towy miï¿½dzy platformami (staï¿½y)
         float angleStep = Mathf.PI * 2 / PLATFORMS_NUM;
 
         for (int i = 0; i < platforms.Length; i++)
         {
-            // 1. Obliczamy aktualny k¹t
+            // 1. Obliczamy aktualny kï¿½t
             // i * angleStep -> pozycja startowa platformy
-            // Time.time * rotationSpeed -> przesuniêcie w czasie (obrót ca³ego uk³adu)
+            // Time.time * rotationSpeed -> przesuniï¿½cie w czasie (obrï¿½t caï¿½ego ukï¿½adu)
             float currentAngle = (i * angleStep) + (Time.time * rotationSpeed);
 
-            // 2. Wyznaczamy pozycjê na okrêgu
+            // 2. Wyznaczamy pozycjï¿½ na okrï¿½gu
             float x = Mathf.Cos(currentAngle) * radius;
             float y = Mathf.Sin(currentAngle) * radius;
 
-            // 3. Przypisujemy pozycjê BEZPOŒREDNIO
-            // Usuwamy MoveTowards, aby platforma by³a "przyklejona" do okrêgu
+            // 3. Przypisujemy pozycjï¿½ BEZPOï¿½REDNIO
+            // Usuwamy MoveTowards, aby platforma byï¿½a "przyklejona" do okrï¿½gu
             platforms[i].transform.position = transform.position + new Vector3(x, y, 0);
         }
     }

@@ -47,10 +47,10 @@ public class GameManager : MonoBehaviour
 
     [Header("UI Text References")]
     public TMP_Text scoreLabel;       // Wynik w trakcie gry
-    public TMP_Text finalScoreLabel;  // Wynik na ekranie koñcowym
+    public TMP_Text finalScoreLabel;  // Wynik na ekranie koï¿½cowym
     public TMP_Text livesText;        // Licznik serc
     public TMP_Text timeText;         // Licznik czasu
-    public TMP_Text enemiesText;      // Licznik wrogów
+    public TMP_Text enemiesText;      // Licznik wrogï¿½w
     public TMP_Text keyText;          // Licznik kluczy
 
 
@@ -61,9 +61,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Canvas optionsCanvas; // Referencja do Canvasu opcji
 
     [Header("NPC Moving")]
-    [SerializeField] public GameObject gepardNPC; // Przeci¹gniesz tu obiekt Geparda
-    [SerializeField] public Transform gepardDestination; // Przeci¹gniesz tu ten pusty punkt w gara¿u
-    [TextArea(3, 10)] // To sprawia, ¿e w Inspectorze bêdzie du¿e pole do pisania
+    [SerializeField] public GameObject gepardNPC; // Przeciï¿½gniesz tu obiekt Geparda
+    [SerializeField] public Transform gepardDestination; // Przeciï¿½gniesz tu ten pusty punkt w garaï¿½u
+    [TextArea(3, 10)] // To sprawia, ï¿½e w Inspectorze bï¿½dzie duï¿½e pole do pisania
     [SerializeField] public string[] victoryDialogue;
 
     void Awake()
@@ -86,13 +86,13 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         SetGameState(GameState.GAME);
-        UpdateUI(); // Wa¿ne: Odœwie¿ UI na starcie, ¿eby pokazaæ pocz¹tkowe ¿ycia i wrogów
+        UpdateUI(); // Waï¿½ne: Odï¿½wieï¿½ UI na starcie, ï¿½eby pokazaï¿½ poczï¿½tkowe ï¿½ycia i wrogï¿½w
         
     }
 
     void Update()
     {
-        // Obs³uga pauzy (ESC)
+        // Obsï¿½uga pauzy (ESC)
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (currentGameState == GameState.PAUSE_MENU)
@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
                 SetGameState(GameState.PAUSE_MENU);
         }
 
-        // Obs³uga Czasu (tylko podczas gry)
+        // Obsï¿½uga Czasu (tylko podczas gry)
         if (currentGameState == GameState.GAME)
         {
             gameTime += Time.deltaTime;
@@ -123,16 +123,16 @@ public class GameManager : MonoBehaviour
             // Sprawdzamy konkretny indeks: Czy mamy klucz nr "i"?
             if (collectedKeys[i] == true)
             {
-                keyIcons[i].color = unlockedColor; // Poka¿ kolor
+                keyIcons[i].color = unlockedColor; // Pokaï¿½ kolor
             }
             else
             {
-                keyIcons[i].color = lockedColor; // Poka¿ cieñ
+                keyIcons[i].color = lockedColor; // Pokaï¿½ cieï¿½
             }
         }
     }
 
-    // Metoda do odœwie¿ania liczników (¯ycia i Wrogowie)
+    // Metoda do odï¿½wieï¿½ania licznikï¿½w (ï¿½ycia i Wrogowie)
     void UpdateUI()
     {
         if (livesText != null)
@@ -156,14 +156,14 @@ public class GameManager : MonoBehaviour
     {
         livesNum += value;
 
-        // Zabezpieczenie przed œmierci¹
+        // Zabezpieczenie przed ï¿½mierciï¿½
         if (livesNum <= 0)
         {
             livesNum = 0;
             GameOver();
         }
 
-        UpdateUI(); // Odœwie¿ licznik serc
+        UpdateUI(); // Odï¿½wieï¿½ licznik serc
     }
 
     public void AddKey(KeyColor color)
@@ -177,15 +177,15 @@ public class GameManager : MonoBehaviour
     public void AddEnemyKill()
     {
         defeatedEnemies++;
-        UpdateUI(); // Odœwie¿ licznik wrogów
+        UpdateUI(); // Odï¿½wieï¿½ licznik wrogï¿½w
     }
 
-    // Zarz¹dzanie stanami gry
+    // Zarzï¿½dzanie stanami gry
     void SetGameState(GameState newGameState)
     {
         currentGameState = newGameState;
 
-        // W³¹cz/Wy³¹cz Canvasy w zale¿noœci od stanu
+        // Wï¿½ï¿½cz/Wyï¿½ï¿½cz Canvasy w zaleï¿½noï¿½ci od stanu
         if (gameCanvas != null)
             gameCanvas.enabled = (currentGameState == GameState.GAME);
 
@@ -194,14 +194,14 @@ public class GameManager : MonoBehaviour
         if (optionsCanvas != null) optionsCanvas.enabled = (currentGameState == GameState.GS_OPTIONS);
         if (gameOverCanvas != null) gameOverCanvas.enabled = (currentGameState == GameState.GAME_OVER);
 
-        // Zamro¿enie czasu w menu
+        // Zamroï¿½enie czasu w menu
         Time.timeScale = (currentGameState == GameState.PAUSE_MENU || currentGameState == GameState.GS_OPTIONS) ? 0f : 1f;
 
         
 
         if (levelCompleted != null)
         {
-            // Jeœli ukoñczono poziom, w³¹cz ekran koñcowy
+            // Jeï¿½li ukoï¿½czono poziom, wï¿½ï¿½cz ekran koï¿½cowy
             if (newGameState == GameState.LEVEL_COMPLETED)
             {
                 levelCompleted.enabled = true;
@@ -221,7 +221,7 @@ public class GameManager : MonoBehaviour
     {
         if (gepardNPC != null && gepardDestination != null)
         {
-            Debug.Log("Przenoszenie Geparda do gara¿u...");
+            Debug.Log("Przenoszenie Geparda do garaï¿½u...");
             gepardNPC.transform.position = gepardDestination.position;
             NPC_Dialogue npcScript = gepardNPC.GetComponent<NPC_Dialogue>();
 
@@ -229,21 +229,21 @@ public class GameManager : MonoBehaviour
             {
                 npcScript.sentences = victoryDialogue;
 
-                Debug.Log("Dialog Geparda zosta³ zaktualizowany!");
+                Debug.Log("Dialog Geparda zostaï¿½ zaktualizowany!");
             }
         }
     }
 
     public void Options() => SetGameState(GameState.GS_OPTIONS);
 
-    public void SetVolume(float vol) => AudioListener.volume = vol; // Ustawienie g³oœnoœci
+    public void SetVolume(float vol) => AudioListener.volume = vol; // Ustawienie gï¿½oï¿½noï¿½ci
 
-    public void IncreaseQuality() => QualitySettings.IncreaseLevel(); // Zwiêkszenie jakoœci
-    public void DecreaseQuality() => QualitySettings.DecreaseLevel(); // Zmniejszenie jakoœci
+    public void IncreaseQuality() => QualitySettings.IncreaseLevel(); // Zwiï¿½kszenie jakoï¿½ci
+    public void DecreaseQuality() => QualitySettings.DecreaseLevel(); // Zmniejszenie jakoï¿½ci
 
-    public string GetQualityName() => QualitySettings.names[QualitySettings.GetQualityLevel()]; // Nazwa jakoœci
+    public string GetQualityName() => QualitySettings.names[QualitySettings.GetQualityLevel()]; // Nazwa jakoï¿½ci
 
-    // --- Metody dla Przycisków UI ---
+    // --- Metody dla Przyciskï¿½w UI ---
     public void OnResumeButtonClick()
     {
         InGame();
@@ -256,7 +256,7 @@ public class GameManager : MonoBehaviour
 
     public void OnMenuButtonClick()
     {
-        Time.timeScale = 1f; // Upewnij siê, ¿e czas p³ynie po wyjœciu do menu
+        Time.timeScale = 1f; // Upewnij siï¿½, ï¿½e czas pï¿½ynie po wyjï¿½ciu do menu
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -265,8 +265,8 @@ public class GameManager : MonoBehaviour
     {
         SetGameState(GameState.LEVEL_COMPLETED);
 
-        // ¯adnego sprawdzania "if level 1", "if level 2".
-        // Po prostu w³¹czamy to, co jest przypisane w tej scenie.
+        // ï¿½adnego sprawdzania "if level 1", "if level 2".
+        // Po prostu wï¿½ï¿½czamy to, co jest przypisane w tej scenie.
         if (levelCompleted != null)
         {
             levelCompleted.enabled = true;
