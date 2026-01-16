@@ -1,5 +1,5 @@
 using UnityEngine;
-using TMPro;
+using TMPro; // U¿ywamy TextMeshPro (jeœli u¿ywasz zwyk³ego Text, zmieñ na: using UnityEngine.UI;)
 using System.Collections;
 using System.Collections.Generic;
 
@@ -14,8 +14,6 @@ public class DialogueManager : MonoBehaviour
 
     private Queue<string> sentences; // Kolejka zdaï¿½
     private bool isDialogueActive = false;
-    private bool isTyping = false;
-    private string currentSentence = "";
 
     [Header("Audio Settings")]
     [SerializeField] private AudioClip typingSound; // Twï¿½j dï¿½wiï¿½k "blip"
@@ -69,17 +67,22 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
+<<<<<<< HEAD
         currentSentence = sentences.Dequeue();
 
         //string sentence = sentences.Dequeue();
         StopAllCoroutines(); // Zatrzymuje poprzednie pisanie, jeï¿½li gracz klika szybko
         StartCoroutine(TypeSentence(currentSentence));
+=======
+        string sentence = sentences.Dequeue();
+        StopAllCoroutines(); // Zatrzymuje poprzednie pisanie, jeœli gracz klika szybko
+        StartCoroutine(TypeSentence(sentence));
+>>>>>>> 3b8118b3d6c8cf75ee511cf59f48b463c2c6f15c
     }
 
     // Efekt pisania na maszynie
     IEnumerator TypeSentence(string sentence)
     {
-        isTyping = true;
         dialogueText.text = "";
         int charCount = 0; // Licznik liter
 
@@ -101,7 +104,10 @@ public class DialogueManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.03f); // Szybkoï¿½ï¿½ pisania
         }
+<<<<<<< HEAD
         isTyping = false; // --- ZMIANA 4: Skoï¿½czyliï¿½my pisaï¿½
+=======
+>>>>>>> 3b8118b3d6c8cf75ee511cf59f48b463c2c6f15c
     }
 
     void EndDialogue()
@@ -121,6 +127,7 @@ public class DialogueManager : MonoBehaviour
         // Przewijanie dialogu spacjï¿½ lub myszkï¿½
         if (isDialogueActive && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
+<<<<<<< HEAD
             if (isTyping)
             {
                 // Jeï¿½li tekst siï¿½ pisze -> Przerwij i pokaï¿½ caï¿½oï¿½ï¿½
@@ -133,6 +140,9 @@ public class DialogueManager : MonoBehaviour
                 // Jeï¿½li tekst jest juï¿½ caï¿½y -> Pokaï¿½ nastï¿½pny
                 DisplayNextSentence();
             }
+=======
+            DisplayNextSentence();
+>>>>>>> 3b8118b3d6c8cf75ee511cf59f48b463c2c6f15c
         }
     }
 }

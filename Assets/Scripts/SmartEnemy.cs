@@ -328,11 +328,18 @@ public class SmartEnemy : MonoBehaviour
 
     void FlipTowards(Vector3 target)
     {
+<<<<<<< HEAD
         // Obliczamy rï¿½nicï¿½ w poziomie (X)
+=======
+        // --- NOWOŒÆ: MARTWA STREFA ---
+        // Obliczamy ró¿nicê w poziomie (X)
+>>>>>>> 3b8118b3d6c8cf75ee511cf59f48b463c2c6f15c
         float xDiff = target.x - transform.position.x;
 
+        // Jeœli gracz jest bli¿ej ni¿ 0.5f w poziomie, NIE OBRACAJ SIÊ.
+        // To zapobiega "migotaniu" psa gdy stoisz nad nim.
         if (Mathf.Abs(xDiff) < 0.5f) return;
-
+        // -----------------------------
 
         if (target.x > transform.position.x) transform.localScale = new Vector3(-1, 1, 1);
         else transform.localScale = new Vector3(1, 1, 1);
@@ -349,14 +356,14 @@ public class SmartEnemy : MonoBehaviour
 
         if (type == EnemyType.BossEagle && currentHealth > 0)
         {
-
+            // 1. Resetujemy fizykê, ¿eby Orze³ nie kozio³kowa³ od uderzenia
             if (rb != null)
             {
                 rb.linearVelocity = Vector2.zero;
                 rb.angularVelocity = 0f;
             }
 
- 
+            // 2. Zmuszamy go do odwrotu (lotu w górê do waypointów)
             bossState = BossState.Returning;
 
             timer = 0;
@@ -372,6 +379,10 @@ public class SmartEnemy : MonoBehaviour
         isDead = true;
         GetComponent<Collider2D>().enabled = false;
 
+        if (type == EnemyType.BossEagle)
+        {
+            GameManager.instance.MoveGepard();
+        }
 
         if (bossHealthBar) bossHealthBar.gameObject.SetActive(false);
         if (anim) anim.SetTrigger("Death");

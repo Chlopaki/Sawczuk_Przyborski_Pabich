@@ -642,34 +642,6 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4280929279
       objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1912440725}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnLevel2ButtonClick
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 3824865510209748637, guid: e664078dea22483499def1f56d4cf324, type: 3}
       propertyPath: m_Name
       value: Level2Button
@@ -2511,11 +2483,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.542
+      value: 4.6928797
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.231
+      value: -1.2235687
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2551,19 +2523,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.543
+      value: -0.21
       objectReference: {fileID: 0}
     - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.331
+      value: 1.268
       objectReference: {fileID: 0}
     - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.3
+      value: 1.817
       objectReference: {fileID: 0}
     - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.312
+      value: 1.296
       objectReference: {fileID: 0}
     - target: {fileID: 5661253925017708055, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_Size.x
@@ -5986,7 +5958,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 3
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -63402,7 +63374,6 @@ MonoBehaviour:
     Imponuj\u0105cy!"
   - "Teraz odpocznij. Mamy d\u0142ugi weekend wy\u015Bcigowy przed sob\u0105. Dzi\u0119ki
     za pomoc."
-  keysToTeleport: 3
 --- !u!114 &1912440726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65609,6 +65580,7 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+<<<<<<< HEAD
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
       propertyPath: sentences.Array.data[3]
       value: "Musimy odbudowa\u0107 auto. Potrzebne jest zawieszenie, silnik i...
@@ -65627,6 +65599,8 @@ PrefabInstance:
         sztuczka p\xF3\u0142zmy\u0142ka, taki unik. A pod [F] masz... eeee, wyrzut
         zu\u017Cytych opon. P\u0142on\u0105cych. Taka nasza strategia oponiarska."
       objectReference: {fileID: 0}
+=======
+>>>>>>> 3b8118b3d6c8cf75ee511cf59f48b463c2c6f15c
     - target: {fileID: 4252301592013299750, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.56
@@ -65908,11 +65882,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.129
+      value: -2.8992357
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.086
+      value: -1.9955659
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.z
@@ -65945,22 +65919,6 @@ PrefabInstance:
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 5.852
-      objectReference: {fileID: 0}
-    - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.358
-      objectReference: {fileID: 0}
-    - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 4.055
-      objectReference: {fileID: 0}
-    - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.372
       objectReference: {fileID: 0}
     - target: {fileID: 5661253925017708055, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_Size.x
