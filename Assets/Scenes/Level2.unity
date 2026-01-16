@@ -3233,6 +3233,44 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8804435494091250963, guid: fb28681639fc7e84a867fab59abdc97d, type: 3}
   m_PrefabInstance: {fileID: 1352088812}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &835841860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835841854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -680852136182916606, guid: c9a0cff01567e7547a52a0ddf75d8944, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &835841861
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835841854}
+  m_CullTransparentMesh: 1
 --- !u!1 &869322355 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5398236848594371357, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
@@ -5778,6 +5816,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3918474193287523531, guid: fb28681639fc7e84a867fab59abdc97d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 835841856}
+    - targetCorrespondingSourceObject: {fileID: 3918474193287523531, guid: fb28681639fc7e84a867fab59abdc97d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 835841861}
+    - targetCorrespondingSourceObject: {fileID: 3918474193287523531, guid: fb28681639fc7e84a867fab59abdc97d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 835841860}
   m_SourcePrefab: {fileID: 100100000, guid: fb28681639fc7e84a867fab59abdc97d, type: 3}
 --- !u!1 &1362597503
 GameObject:
@@ -8484,6 +8528,7 @@ MonoBehaviour:
     Imponuj\u0105cy!"
   - "Teraz odpocznij. Mamy d\u0142ugi weekend wy\u015Bcigowy przed sob\u0105. Dzi\u0119ki
     za pomoc."
+  keysToTeleport: 3
 --- !u!114 &1912440726
 MonoBehaviour:
   m_ObjectHideFlags: 0
