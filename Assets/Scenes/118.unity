@@ -642,34 +642,6 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4280929279
       objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1912440725}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnLevel2ButtonClick
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 1667649689010449288, guid: e664078dea22483499def1f56d4cf324, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 3824865510209748637, guid: e664078dea22483499def1f56d4cf324, type: 3}
       propertyPath: m_Name
       value: Level2Button
@@ -2511,11 +2483,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.542
+      value: 4.6928797
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.231
+      value: -1.2235687
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2551,19 +2523,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.543
+      value: -0.21
       objectReference: {fileID: 0}
     - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.331
+      value: 1.268
       objectReference: {fileID: 0}
     - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.3
+      value: 1.817
       objectReference: {fileID: 0}
     - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.312
+      value: 1.296
       objectReference: {fileID: 0}
     - target: {fileID: 5661253925017708055, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_Size.x
@@ -5269,39 +5241,39 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[0]'
+      propertyPath: sentences.Array.data[0]
       value: "Eeee... yyy... Cze\u015B\u0107."
       objectReference: {fileID: 0}
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[1]'
+      propertyPath: sentences.Array.data[1]
       value: "To nie jest to, na co wygl\u0105da. Testuj\u0119... pasywne ch\u0142odzenie
         silnika. W cieniu. Taktyka oszcz\u0119dzania opon."
       objectReference: {fileID: 0}
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[2]'
+      propertyPath: sentences.Array.data[2]
       value: "Wiadomo, teoretycznie powinienem by\u0107 w gara\u017Cu i sk\u0142ada\u0107
         bolid. Ale telemetria pokaza\u0142a, \u017Ce tutaj jest... eeee... lepszy
         balans wilgotno\u015Bci."
       objectReference: {fileID: 0}
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[3]'
-      value: "Z punktu widzenia dewelopera, to jest, powiedzmy, b\u0142\u0105d w
-        kodzie. Glitch. Ale z mojej perspektywy to jest \"feature\"."
+      propertyPath: sentences.Array.data[3]
+      value: "Z punktu widzenia dewelopera, to jest, powiedzmy, b\u0142\u0105d w kodzie.
+        Glitch. Ale z mojej perspektywy to jest \"feature\"."
       objectReference: {fileID: 0}
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[4]'
+      propertyPath: sentences.Array.data[4]
       value: "Nikomu nie m\xF3w. Szczeg\xF3lnie s\u0119dziom. To znaczy... tw\xF3rcy
         gry. Sytuacja jest opanowana."
       objectReference: {fileID: 0}
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[5]'
+      propertyPath: sentences.Array.data[5]
       value: "Dobra, nie przeszkadzaj. Musz\u0119 przeanalizowa\u0107... szum li\u015Bci.
         To wa\u017Cne dla aerodynamiki."
       objectReference: {fileID: 0}
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[6]'
-      value: "Z punktu widzenia dewelopera, to jest, powiedzmy, b\u0142\u0105d w
-        kodzie. Glitch. Ale z mojej perspektywy to jest \"feature\"."
+      propertyPath: sentences.Array.data[6]
+      value: "Z punktu widzenia dewelopera, to jest, powiedzmy, b\u0142\u0105d w kodzie.
+        Glitch. Ale z mojej perspektywy to jest \"feature\"."
       objectReference: {fileID: 0}
     - target: {fileID: 4252301592013299750, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5986,7 +5958,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 3
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -63402,7 +63374,6 @@ MonoBehaviour:
     Imponuj\u0105cy!"
   - "Teraz odpocznij. Mamy d\u0142ugi weekend wy\u015Bcigowy przed sob\u0105. Dzi\u0119ki
     za pomoc."
-  keysToTeleport: 3
 --- !u!114 &1912440726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65609,24 +65580,27 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+<<<<<<< HEAD
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[3]'
+      propertyPath: sentences.Array.data[3]
       value: "Musimy odbudowa\u0107 auto. Potrzebne jest zawieszenie, silnik i...
         skrzynia. Z t\u0105 ostatni\u0105 b\u0119dzie problem. Zabra\u0142 j\u0105
         jeden Orze\u0142 D\u017Cord\u017C. Bardzo agresywny zawodnik, nie zostawia
         miejsca na torze."
       objectReference: {fileID: 0}
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[5]'
+      propertyPath: sentences.Array.data[5]
       value: "Reszta \"zawodnik\xF3w\" jest bardziej wymagaj\u0105ca. Musisz na nich
         uwa\u017Ca\u0107... Szczeg\xF3lnie na tego Or\u0142a D\u017Cord\u017Ca"
       objectReference: {fileID: 0}
     - target: {fileID: 1725786888987843799, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
-      propertyPath: 'sentences.Array.data[8]'
+      propertyPath: sentences.Array.data[8]
       value: "Dobra. Teraz masz tajemnicze zdolno\u015Bci. [L-ctrl] to moja ulubiona
         sztuczka p\xF3\u0142zmy\u0142ka, taki unik. A pod [F] masz... eeee, wyrzut
         zu\u017Cytych opon. P\u0142on\u0105cych. Taka nasza strategia oponiarska."
       objectReference: {fileID: 0}
+=======
+>>>>>>> 3b8118b3d6c8cf75ee511cf59f48b463c2c6f15c
     - target: {fileID: 4252301592013299750, guid: 574458242534dc442bc0e55a48af5b44, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.56
@@ -65908,11 +65882,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.129
+      value: -2.8992357
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.086
+      value: -1.9955659
       objectReference: {fileID: 0}
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalPosition.z
@@ -65945,22 +65919,6 @@ PrefabInstance:
     - target: {fileID: 4647412606908807125, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 5.852
-      objectReference: {fileID: 0}
-    - target: {fileID: 5113978258413706092, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.358
-      objectReference: {fileID: 0}
-    - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 4.055
-      objectReference: {fileID: 0}
-    - target: {fileID: 5360545896002602124, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.372
       objectReference: {fileID: 0}
     - target: {fileID: 5661253925017708055, guid: 08aba51f11fbb94488821fe25735f107, type: 3}
       propertyPath: m_Size.x

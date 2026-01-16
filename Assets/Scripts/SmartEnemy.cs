@@ -19,18 +19,18 @@ public class SmartEnemy : MonoBehaviour
     public float detectRange = 5f;
     public Transform playerTransform; // Przypiszemy automatycznie
 
-    [Header("Ustawienia Bossa (Orze³)")]
-    public float diveSpeed = 10f;     // Szybkoœæ ataku
+    [Header("Ustawienia Bossa (Orzeï¿½)")]
+    public float diveSpeed = 10f;     // Szybkoï¿½ï¿½ ataku
     public float prepareTime = 0.8f;  // Czas celowania przed atakiem
-    public float waitOnGround = 0.5f; // Ile le¿y na ziemi zanim wróci
-    private float attackCooldown = 0f; //Ile czasu jest miêdzy atakami
-    [Tooltip("Jak daleko w lewo/prawo orze³ widzi gracza")]
+    public float waitOnGround = 0.5f; // Ile leï¿½y na ziemi zanim wrï¿½ci
+    private float attackCooldown = 0f; //Ile czasu jest miï¿½dzy atakami
+    [Tooltip("Jak daleko w lewo/prawo orzeï¿½ widzi gracza")]
     [SerializeField] private float horizontalDetectRange = 8.0f;
     public Slider bossHealthBar;
     [Header("Nagroda za Bossa")]
     [SerializeField] private GameObject lootDrop;
 
-    // Maszyna Stanów Bossa
+    // Maszyna Stanï¿½w Bossa
     private enum BossState { Patrolling, Preparing, Diving, Recovering, Returning }
     private BossState bossState = BossState.Patrolling;
 
@@ -42,7 +42,7 @@ public class SmartEnemy : MonoBehaviour
     private Animator anim;
     private Rigidbody2D rb;
 
-    private float minX, maxX; // dla chaserów
+    private float minX, maxX; // dla chaserï¿½w
 
     void Start()
     {
@@ -51,7 +51,7 @@ public class SmartEnemy : MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
-        // ZnajdŸ gracza
+        // Znajdï¿½ gracza
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         if (p) playerTransform = p.transform;
 
@@ -71,13 +71,13 @@ public class SmartEnemy : MonoBehaviour
 
             foreach (Transform wp in waypoints)
             {
-                if (wp.position.x < minX) minX = wp.position.x; // ZnajdŸ lew¹ granicê
-                if (wp.position.x > maxX) maxX = wp.position.x; // ZnajdŸ praw¹ granicê
+                if (wp.position.x < minX) minX = wp.position.x; // Znajdï¿½ lewï¿½ granicï¿½
+                if (wp.position.x > maxX) maxX = wp.position.x; // Znajdï¿½ prawï¿½ granicï¿½
             }
         }
         else
         {
-            // Zabezpieczenie jakbyœ zapomnia³ daæ waypointów (pies ma nieskoñczony wybieg)
+            // Zabezpieczenie jakbyï¿½ zapomniaï¿½ daï¿½ waypointï¿½w (pies ma nieskoï¿½czony wybieg)
             minX = -9999f;
             maxX = 9999f;
         }
@@ -92,7 +92,7 @@ public class SmartEnemy : MonoBehaviour
             attackCooldown -= Time.deltaTime;
         }
 
-        // Wybór zachowania zale¿nie od typu
+        // Wybï¿½r zachowania zaleï¿½nie od typu
         switch (type)
         {
             case EnemyType.Patroller:
@@ -107,7 +107,7 @@ public class SmartEnemy : MonoBehaviour
         }
     }
 
-    // --- LOGIKA OR£A (BOSS) ---
+    // --- LOGIKA ORï¿½A (BOSS) ---
     void HandleBossEagle()
     {
 
@@ -116,10 +116,10 @@ public class SmartEnemy : MonoBehaviour
             // Obliczamy dystans do gracza
             float distToPlayer = Vector2.Distance(transform.position, playerTransform.position);
 
-            // Ustalamy zasiêg UI jako 1.75x zasiêgu wykrywania
+            // Ustalamy zasiï¿½g UI jako 1.75x zasiï¿½gu wykrywania
             float uiRange = horizontalDetectRange * 1.75f;
 
-            // Jeœli gracz jest blisko -> Poka¿ pasek. Jeœli daleko -> Ukryj.
+            // Jeï¿½li gracz jest blisko -> Pokaï¿½ pasek. Jeï¿½li daleko -> Ukryj.
             if (distToPlayer < uiRange)
             {
                 if (!bossHealthBar.gameObject.activeSelf)
@@ -132,7 +132,7 @@ public class SmartEnemy : MonoBehaviour
             }
         }
 
-        // Zabezpieczenie: Jeœli gracz nie istnieje/zgin¹³ -> Wracaj na górê
+        // Zabezpieczenie: Jeï¿½li gracz nie istnieje/zginï¿½ï¿½ -> Wracaj na gï¿½rï¿½
         if (playerTransform == null || !playerTransform.gameObject.activeInHierarchy)
         {
             bossState = BossState.Returning;
@@ -141,17 +141,17 @@ public class SmartEnemy : MonoBehaviour
         switch (bossState)
         {
             case BossState.Patrolling:
-                Patrol(); // Lata lewo-prawo miêdzy waypointami
+                Patrol(); // Lata lewo-prawo miï¿½dzy waypointami
 
 
                 // 1. Dystans poziomy (czy jest blisko w lewo/prawo)
                 float distSide = Mathf.Abs(playerTransform.position.x - transform.position.x);
 
-                // 2. Dystans pionowy (Orze³ musi byæ WY¯EJ ni¿ gracz)
+                // 2. Dystans pionowy (Orzeï¿½ musi byï¿½ WYï¿½EJ niï¿½ gracz)
                 // transform.position.y > playerTransform.position.y
                 bool isPlayerBelow = transform.position.y > playerTransform.position.y + 0.5f; // +0.5f marginesu
 
-                // Jeœli gracz jest blisko (10 kratek) I jest pod spodem -> ATAK
+                // Jeï¿½li gracz jest blisko (10 kratek) I jest pod spodem -> ATAK
                 if (attackCooldown <= 0 && distSide < horizontalDetectRange && isPlayerBelow)
                 {
                     bossState = BossState.Preparing;
@@ -165,15 +165,15 @@ public class SmartEnemy : MonoBehaviour
                 // Zatrzymanie w powietrzu (Telegrafowanie ataku)
                 timer -= Time.deltaTime;
 
-                // Ci¹gle œledzimy gracza wzrokiem i celownikiem
+                // Ciï¿½gle ï¿½ledzimy gracza wzrokiem i celownikiem
                 FlipTowards(playerTransform.position);
                 targetDivePosition = playerTransform.position;
 
-                // Jeœli w trakcie przygotowania gracz ucieknie NA GÓRÊ (nad or³a), przerywamy atak
+                // Jeï¿½li w trakcie przygotowania gracz ucieknie NA Gï¿½Rï¿½ (nad orï¿½a), przerywamy atak
                 if (transform.position.y < playerTransform.position.y)
                 {
                     bossState = BossState.Patrolling;
-                    Debug.Log("Orze³: Gracz uciek³ na górê, przerywam.");
+                    Debug.Log("Orzeï¿½: Gracz uciekï¿½ na gï¿½rï¿½, przerywam.");
                 }
 
                 if (timer <= 0)
@@ -185,22 +185,22 @@ public class SmartEnemy : MonoBehaviour
                 break;
 
             case BossState.Diving:
-                // Lecimy w dó³ (do zapamiêtanej pozycji)
+                // Lecimy w dï¿½ (do zapamiï¿½tanej pozycji)
                 transform.position = Vector2.MoveTowards(transform.position, targetDivePosition, diveSpeed * Time.deltaTime);
 
-                // Sprawdzamy czy uderzy³ w ziemiê/cel
+                // Sprawdzamy czy uderzyï¿½ w ziemiï¿½/cel
                 if (Vector2.Distance(transform.position, targetDivePosition) < 0.1f)
                 {
-                    timer = waitOnGround; // Le¿y chwilê na ziemi
+                    timer = waitOnGround; // Leï¿½y chwilï¿½ na ziemi
                     bossState = BossState.Recovering;
 
-                    // Opcjonalnie: Efekt uderzenia o ziemiê (py³)
+                    // Opcjonalnie: Efekt uderzenia o ziemiï¿½ (pyï¿½)
                 }
                 break;
 
             case BossState.Recovering:
                 timer -= Time.deltaTime;
-                // Gracz ma teraz czas, ¿eby uderzyæ le¿¹cego or³a!
+                // Gracz ma teraz czas, ï¿½eby uderzyï¿½ leï¿½ï¿½cego orï¿½a!
                 if (timer <= 0)
                 {
                     bossState = BossState.Returning;
@@ -208,10 +208,10 @@ public class SmartEnemy : MonoBehaviour
                 break;
 
             case BossState.Returning:
-                // Powrót na górê (do Waypointów)
+                // Powrï¿½t na gï¿½rï¿½ (do Waypointï¿½w)
                 Transform home = waypoints[0];
 
-                // Wybieramy bli¿szy punkt, ¿eby nie lecia³ przez ca³¹ mapê
+                // Wybieramy bliï¿½szy punkt, ï¿½eby nie leciaï¿½ przez caï¿½ï¿½ mapï¿½
                 if (waypoints.Length > 1)
                 {
                     float d0 = Vector2.Distance(transform.position, waypoints[0].position);
@@ -221,7 +221,7 @@ public class SmartEnemy : MonoBehaviour
 
                 transform.position = Vector2.MoveTowards(transform.position, home.position, speed * Time.deltaTime);
 
-                // Jak wróci na miejsce -> Znowu patroluje
+                // Jak wrï¿½ci na miejsce -> Znowu patroluje
                 if (Vector2.Distance(transform.position, home.position) < 0.5f)
                 {
                     bossState = BossState.Patrolling;
@@ -237,7 +237,7 @@ public class SmartEnemy : MonoBehaviour
         if (type == EnemyType.BossEagle)
         {
             Gizmos.color = Color.red;
-            // Rysujemy prostok¹t: szerokoœæ to 2x zasiêg (lewo+prawo), wysokoœæ du¿a w dó³
+            // Rysujemy prostokï¿½t: szerokoï¿½ï¿½ to 2x zasiï¿½g (lewo+prawo), wysokoï¿½ï¿½ duï¿½a w dï¿½
             Gizmos.DrawWireCube(transform.position + Vector3.down * 5, new Vector3(horizontalDetectRange * 2, 10, 0));
 
             Gizmos.color = Color.cyan;
@@ -265,7 +265,7 @@ public class SmartEnemy : MonoBehaviour
 
         FlipTowards(target.position);
 
-        // Sprawdzamy tylko dystans w poziomie (X), ¿eby zaliczy³ punkt nawet jak jest nad nim
+        // Sprawdzamy tylko dystans w poziomie (X), ï¿½eby zaliczyï¿½ punkt nawet jak jest nad nim
         if (Mathf.Abs(transform.position.x - target.position.x) < 0.2f)
         {
             currentPointIndex = (currentPointIndex + 1) % waypoints.Length;
@@ -281,10 +281,10 @@ public class SmartEnemy : MonoBehaviour
             // 1. Gdzie jest gracz?
             float targetX = playerTransform.position.x;
 
-            // 2. Jeœli gracz jest poza terenem, pies celuje w granicê (p³ot)
+            // 2. Jeï¿½li gracz jest poza terenem, pies celuje w granicï¿½ (pï¿½ot)
             targetX = Mathf.Clamp(targetX, minX, maxX);
 
-            // 3. Obliczamy, czy pies ma gdzie iœæ (odleg³oœæ do zablokowanego celu)
+            // 3. Obliczamy, czy pies ma gdzie iï¿½ï¿½ (odlegï¿½oï¿½ï¿½ do zablokowanego celu)
             float xDiff = targetX - transform.position.x;
 
             // --- Ruch i Animacja ---
@@ -294,7 +294,7 @@ public class SmartEnemy : MonoBehaviour
 
                 if (rb != null)
                 {
-                    // Idziemy w stronê targetX (czyli albo gracza, albo granicy terytorium)
+                    // Idziemy w stronï¿½ targetX (czyli albo gracza, albo granicy terytorium)
                     rb.linearVelocity = new Vector2(direction * speed * 1.5f, rb.linearVelocity.y);
                 }
                 else
@@ -305,22 +305,22 @@ public class SmartEnemy : MonoBehaviour
 
                 if (anim) anim.SetBool("IsRunning", true);
 
-                // Obracamy siê w stronê celu (¿eby pies szczeka³ na gracza stoj¹c przy granicy)
+                // Obracamy siï¿½ w stronï¿½ celu (ï¿½eby pies szczekaï¿½ na gracza stojï¿½c przy granicy)
                 FlipTowards(new Vector3(playerTransform.position.x, transform.position.y, 0));
             }
             else
             {
-                // Pies dobieg³ do granicy (lub do gracza) i stoi
+                // Pies dobiegï¿½ do granicy (lub do gracza) i stoi
                 if (rb != null) rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
                 if (anim) anim.SetBool("IsRunning", false);
 
-                // Ci¹gle patrz na gracza, nawet jak stoisz przy "p³ocie"
+                // Ciï¿½gle patrz na gracza, nawet jak stoisz przy "pï¿½ocie"
                 FlipTowards(playerTransform.position);
             }
         }
         else
         {
-            // Gracz uciek³ bardzo daleko (poza wzrok) -> Wróæ do patrolu
+            // Gracz uciekï¿½ bardzo daleko (poza wzrok) -> Wrï¿½ï¿½ do patrolu
             Patrol();
             if (anim) anim.SetBool("IsRunning", false);
         }
@@ -328,17 +328,24 @@ public class SmartEnemy : MonoBehaviour
 
     void FlipTowards(Vector3 target)
     {
+<<<<<<< HEAD
+        // Obliczamy rï¿½nicï¿½ w poziomie (X)
+=======
+        // --- NOWOŒÆ: MARTWA STREFA ---
         // Obliczamy ró¿nicê w poziomie (X)
+>>>>>>> 3b8118b3d6c8cf75ee511cf59f48b463c2c6f15c
         float xDiff = target.x - transform.position.x;
 
+        // Jeœli gracz jest bli¿ej ni¿ 0.5f w poziomie, NIE OBRACAJ SIÊ.
+        // To zapobiega "migotaniu" psa gdy stoisz nad nim.
         if (Mathf.Abs(xDiff) < 0.5f) return;
-
+        // -----------------------------
 
         if (target.x > transform.position.x) transform.localScale = new Vector3(-1, 1, 1);
         else transform.localScale = new Vector3(1, 1, 1);
     }
 
-    // --- OTRZYMYWANIE OBRA¯EÑ ---
+    // --- OTRZYMYWANIE OBRAï¿½Eï¿½ ---
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -349,14 +356,14 @@ public class SmartEnemy : MonoBehaviour
 
         if (type == EnemyType.BossEagle && currentHealth > 0)
         {
-
+            // 1. Resetujemy fizykê, ¿eby Orze³ nie kozio³kowa³ od uderzenia
             if (rb != null)
             {
                 rb.linearVelocity = Vector2.zero;
                 rb.angularVelocity = 0f;
             }
 
- 
+            // 2. Zmuszamy go do odwrotu (lotu w górê do waypointów)
             bossState = BossState.Returning;
 
             timer = 0;
@@ -372,6 +379,10 @@ public class SmartEnemy : MonoBehaviour
         isDead = true;
         GetComponent<Collider2D>().enabled = false;
 
+        if (type == EnemyType.BossEagle)
+        {
+            GameManager.instance.MoveGepard();
+        }
 
         if (bossHealthBar) bossHealthBar.gameObject.SetActive(false);
         if (anim) anim.SetTrigger("Death");

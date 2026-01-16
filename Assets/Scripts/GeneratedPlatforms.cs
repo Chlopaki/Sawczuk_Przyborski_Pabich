@@ -3,21 +3,20 @@ using UnityEngine;
 public class GeneratedPlatforms : MonoBehaviour
 {
     [SerializeField] private GameObject platformPrefab;
-    private const int PLATFORMS_NUM = 6; //
+    private const int PLATFORMS_NUM = 6;
 
     private GameObject[] platforms;
 
     [Header("Ustawienia ruchu")]
-    [SerializeField] private float speed = 1.0f;  // Prêdkoœæ obrotu
-    [SerializeField] private float radius = 3.0f; // Promieñ okrêgu
+    [SerializeField] private float rotationSpeed = 1.0f;  // Prï¿½dkoï¿½ï¿½ obrotu (radiany na sekundï¿½)
+    [SerializeField] private float radius = 9.0f; // Promieï¿½ okrï¿½gu
 
     void Awake()
     {
-        platforms = new GameObject[PLATFORMS_NUM]; //
+        platforms = new GameObject[PLATFORMS_NUM];
 
         for (int i = 0; i < PLATFORMS_NUM; i++)
         {
-            // Tworzymy platformy (ich pozycja zostanie ustawiona w Update)
             platforms[i] = Instantiate(platformPrefab, transform.position, Quaternion.identity);
             platforms[i].transform.SetParent(this.transform);
         }
@@ -25,26 +24,23 @@ public class GeneratedPlatforms : MonoBehaviour
 
     void Update()
     {
-        // Implementacja cyklicznego ruchu po okrêgu
+        // Obliczamy odstï¿½p kï¿½towy miï¿½dzy platformami (staï¿½y)
+        float angleStep = Mathf.PI * 2 / PLATFORMS_NUM;
+
         for (int i = 0; i < platforms.Length; i++)
         {
-            // 1. Obliczamy k¹t dla danej platformy (rozstawienie + ruch w czasie)
-            // Ka¿da platforma jest przesuniêta o sta³y u³amek okrêgu (2 * PI / Liczba)
-            float angle = i * Mathf.PI * 2 / PLATFORMS_NUM + Time.time * speed;
+            // 1. Obliczamy aktualny kï¿½t
+            // i * angleStep -> pozycja startowa platformy
+            // Time.time * rotationSpeed -> przesuniï¿½cie w czasie (obrï¿½t caï¿½ego ukï¿½adu)
+            float currentAngle = (i * angleStep) + (Time.time * rotationSpeed);
 
-            // 2. Wyznaczamy now¹ pozycjê X i Y na podstawie funkcji Sin i Cos
-            float x = Mathf.Cos(angle) * radius;
-            float y = Mathf.Sin(angle) * radius;
+            // 2. Wyznaczamy pozycjï¿½ na okrï¿½gu
+            float x = Mathf.Cos(currentAngle) * radius;
+            float y = Mathf.Sin(currentAngle) * radius;
 
-            // 3. Pozycja docelowa wzglêdem œrodka generatora
-            Vector3 targetPos = new Vector3(x, y, 0) + transform.position;
-
-            // 4. Przesuniêcie platformy (u¿ywamy MoveTowards dla p³ynnoœci)
-            platforms[i].transform.position = Vector3.MoveTowards(
-                platforms[i].transform.position,
-                targetPos,
-                speed * Time.deltaTime
-            );
+            // 3. Przypisujemy pozycjï¿½ BEZPOï¿½REDNIO
+            // Usuwamy MoveTowards, aby platforma byï¿½a "przyklejona" do okrï¿½gu
+            platforms[i].transform.position = transform.position + new Vector3(x, y, 0);
         }
     }
 }
