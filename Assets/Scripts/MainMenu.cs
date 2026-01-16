@@ -21,6 +21,21 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("118");
     }
 
+    public void OnLevel2ButtonPressed()
+    {
+        SceneManager.LoadScene("Level2");
+    }
+
+    public void OnLevel3ButtonPressed()
+    {
+        SceneManager.LoadScene("Level 3");
+    }
+
+    public void OnLevel4ButtonPressed()
+    {
+        SceneManager.LoadScene("Level 4");
+    }
+
     public void OnExitButtonPressed()
     {
 

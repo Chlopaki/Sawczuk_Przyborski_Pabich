@@ -14846,6 +14846,12 @@ MonoBehaviour:
   boxSize: {x: 0.12, y: 0}
   checkDistance: 0.2
   groundCheckOffset: {x: -0.015, y: 0}
+  enableWindSystem: 0
+  windEffectGroup: {fileID: 0}
+  windMaxForce: 10
+  windDuration: 3
+  windInterval: 5
+  windChance: 0.2
   isInvincible: 0
   damageImmunityTime: 1.5
   parryDuration: 0.5
